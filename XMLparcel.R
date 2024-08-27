@@ -8,4 +8,5 @@ ParcCurrent <- xpathApply(test, "//gmlGeobjIds", xmlValue)
 xpathSApply(test, "//eing:GEOBJ_ID", xmlValue) == ParcCurrent
 
 
+xpathApply(test, "//eing:FOLDRESZLETEK", function(x){xmlGetAttr(x, "gml:id")})
 
