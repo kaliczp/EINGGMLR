@@ -9,3 +9,5 @@ xpathSApply(test, "//eing:GEOBJ_ID", xmlValue) == ParcCurrent
 
 xpathSApply(test, "//eing:FOLDRESZLETEK", function(x){xmlGetAttr(x, "gml:id")}) == paste0("fid-", ParcCurrent)
 
+testGMLquery <- paste("//eing:FOLDRESZLETEK[@gml:id=", paste0("fid-", ParcCurrent),"]", sep = "'")
+xpathSApply(test, testGMLquery, print)
