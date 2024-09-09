@@ -10,4 +10,11 @@ newgml$addNode("gmlGeobjIds", round(abs(rnorm(1))*10^14))
 newgml$closeNode()
 newgml$closeNode()
 newgml$ycloseNode()
-saveXML(newgml, "newgml.gml", prefix='<?xml version="1.0" encoding="UTF-8" standalone ="no"?>\n')
+
+gmlwithmeta <- xmlTreeParse(saveXML(newgml), useInternalNodes = T)
+root <- xmlRoot(gmlwithmeta)
+metadataNode <- newXMLNode("featureMembers", parent = root, namespace = "gml")
+parcelNode = newXMLNode("FOLDRESZLETEK", parent=metadataNode, namespace = "eing")
+xmlAttrs(parcelNode, TRUE, TRUE) <- c(id= "fid-11111111")
+boundedBy
+saveXML(gmlwithmeta, "gmlwithmeta.gml", prefix='<?xml version="1.0" encoding="UTF-8" standalone ="no"?>\n')
