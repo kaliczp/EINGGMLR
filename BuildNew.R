@@ -1,4 +1,5 @@
 BuildNew <- function(coords, file = "gmlwithmeta.gml", currfid = round(abs(rnorm(1))*10^14)) {
+    ## Meta data creation
     newgml <- xmlTree("gml:FeatureCollection", namespaces = list(eing = "eing.foldhivatal.hu",
                                                              gml = "http://www.opengis.net/gml",
                                                              xlink = "http://www.w3.org/1999/xlink",
@@ -15,10 +16,11 @@ BuildNew <- function(coords, file = "gmlwithmeta.gml", currfid = round(abs(rnorm
     newgml$closeNode()
     newgml$closeNode()
     newgml$ycloseNode()
-
+    ## Create gml
     gmlwithmeta <- xmlTreeParse(saveXML(newgml), useInternalNodes = T)
     root <- xmlRoot(gmlwithmeta)
     metadataNode <- newXMLNode("featureMembers", parent = root, namespace = "gml")
+    ## Create a parcel node
     parcelNode = newXMLNode("FOLDRESZLETEK", parent=metadataNode, namespace = "eing")
     addAttributes(parcelNode, "gml:id" = paste0("fid-", currfid))
     addChildren(parcelNode, newXMLNode("gml:boundedBy"))
