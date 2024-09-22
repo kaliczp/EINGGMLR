@@ -1,4 +1,7 @@
-newgml <- xmlTree("gml:FeatureCollection", namespaces = list(eing = "eing.foldhivatal.hu",gml = "http://www.opengis.net/gml"))
+newgml <- xmlTree("gml:FeatureCollection", namespaces = list(eing = "eing.foldhivatal.hu",
+                                                             gml = "http://www.opengis.net/gml",
+                                                             xlink = "http://www.w3.org/1999/xlink",
+                                                             xs="http://www.w3.org/2001/XMLSchema"))
 newgml$setNamespace("gml")
 newgml$addNode("metaDataProperty", close = FALSE)
 newgml$addNode("GenericMetaData", close = FALSE)
