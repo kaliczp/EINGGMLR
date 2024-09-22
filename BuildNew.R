@@ -1,5 +1,6 @@
 BuildNew <- function(coords, file = "gmlwithmeta.gml", currfid = round(abs(rnorm(1))*10^14)) {
     require(XML)
+    srsName <- "urn:x-ogc:def:crs:EPSG:23700"
     ## Meta data creation
     newgml <- xmlTree("gml:FeatureCollection", namespaces = list(eing = "eing.foldhivatal.hu",
                                                              gml = "http://www.opengis.net/gml",
@@ -23,7 +24,23 @@ BuildNew <- function(coords, file = "gmlwithmeta.gml", currfid = round(abs(rnorm
     ## Create a parcel node
     parcelNode = newXMLNode("FOLDRESZLETEK", parent=metadataNode, namespace = "eing")
     addAttributes(parcelNode, "gml:id" = paste0("fid-", currfid))
-    addChildren(parcelNode, newXMLNode("gml:boundedBy"))
-    addChildren(parcelNode, newXMLNode("gml:Envelope"))
+    parcelBounded <- newXMLNode("boundedBy", parent=parcelNode, namespace = "gml")
+    parcelEnvelope <- newXMLNode("Envelope", parent=parcelBounded, namespace = "gml")
+    addAttributes(parcelEnvelope, srsDimension = 2, srsName = srsName) 
+    addChildren(parcelEnvelope, newXMLNode("lowerCorner", min(coords), namespace = "gml"))
+    addChildren(parcelEnvelope, newXMLNode("upperCorner", max(coords), namespace = "gml"))
+    addChildren(parcelNode, newXMLNode("GEOBJ_ID", currfid, namespace = "eing"))
+    addChildren(parcelNode, newXMLNode("OBJ_FELS", "BC04", namespace = "eing"))
+    addChildren(parcelNode, newXMLNode("RETEG_ID", 20, namespace = "eing"))
+    addChildren(parcelNode, newXMLNode("RETEG_NEV", "Földrészletek" , namespace = "eing"))
+    addChildren(parcelNode, newXMLNode("TELEPULES_ID", 1110, namespace = "eing"))
+    addChildren(parcelNode, newXMLNode("FEKVES", 3720, namespace = "eing"))
+    addChildren(parcelNode, newXMLNode("HRSZ", 110, namespace = "eing"))
+    addChildren(parcelNode, newXMLNode("FELIRAT", 110, namespace = "eing"))
+    addChildren(parcelNode, newXMLNode("SZINT", 0, namespace = "eing"))
+    addChildren(parcelNode, newXMLNode("IRANY", 0, namespace = "eing"))
+    addChildren(parcelNode, newXMLNode("MUVEL_AG", 4557, namespace = "eing"))
+    addChildren(parcelNode, newXMLNode("JOGI_TERULET", 14885, namespace = "eing"))
+    ## Save gml
     saveXML(gmlwithmeta, file, prefix='<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n')
 }
