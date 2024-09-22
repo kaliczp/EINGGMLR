@@ -1,4 +1,5 @@
 BuildNew <- function(coords, file = "gmlwithmeta.gml", currfid = round(abs(rnorm(1))*10^14)) {
+    require(XML)
     ## Meta data creation
     newgml <- xmlTree("gml:FeatureCollection", namespaces = list(eing = "eing.foldhivatal.hu",
                                                              gml = "http://www.opengis.net/gml",
@@ -15,7 +16,6 @@ BuildNew <- function(coords, file = "gmlwithmeta.gml", currfid = round(abs(rnorm
     newgml$addNode("xsdVersion", 2.3)
     newgml$closeNode()
     newgml$closeNode()
-    newgml$ycloseNode()
     ## Create gml
     gmlwithmeta <- xmlTreeParse(saveXML(newgml), useInternalNodes = T)
     root <- xmlRoot(gmlwithmeta)
