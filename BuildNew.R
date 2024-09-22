@@ -20,6 +20,5 @@ gmlwithmeta <- xmlTreeParse(saveXML(newgml), useInternalNodes = T)
 root <- xmlRoot(gmlwithmeta)
 metadataNode <- newXMLNode("featureMembers", parent = root, namespace = "gml")
 parcelNode = newXMLNode("FOLDRESZLETEK", parent=metadataNode, namespace = "eing")
-xmlAttrs(parcelNode, TRUE, TRUE) <- c(id= paste0("fid-", currfid))
-boundedBy
+addAttributes(parcelNode, "gml:id" = paste0("fid-", currfid))
 saveXML(gmlwithmeta, "gmlwithmeta.gml", prefix='<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n')
