@@ -1,6 +1,8 @@
 BuildNew <- function(coords, file = "gmlwithmeta.gml", currfid = round(abs(rnorm(1))*10^14)) {
     require(XML)
     srsName <- "urn:x-ogc:def:crs:EPSG:23700"
+    ## Coordinates prepcocessing
+    coords.matrix <- matrix(coords, ncol = 2, byrow = TRUE)
     ## Meta data creation
     newgml <- xmlTree("gml:FeatureCollection", namespaces = list(eing = "eing.foldhivatal.hu",
                                                              gml = "http://www.opengis.net/gml",
@@ -27,8 +29,8 @@ BuildNew <- function(coords, file = "gmlwithmeta.gml", currfid = round(abs(rnorm
     parcelBounded <- newXMLNode("boundedBy", parent=parcelNode, namespace = "gml")
     parcelEnvelope <- newXMLNode("Envelope", parent=parcelBounded, namespace = "gml")
     addAttributes(parcelEnvelope, srsDimension = 2, srsName = srsName) 
-    addChildren(parcelEnvelope, newXMLNode("lowerCorner", min(coords), namespace = "gml"))
-    addChildren(parcelEnvelope, newXMLNode("upperCorner", max(coords), namespace = "gml"))
+    addChildren(parcelEnvelope, newXMLNode("lowerCorner", paste(min(coords.matrix[,1]), min(coords.matrix[,2])), namespace = "gml"))
+    addChildren(parcelEnvelope, newXMLNode("upperCorner", paste(max(coords.matrix[,1]), max(coords.matrix[,2])), namespace = "gml"))
     addChildren(parcelNode, newXMLNode("GEOBJ_ID", currfid, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("OBJ_FELS", "BC04", namespace = "eing"))
     addChildren(parcelNode, newXMLNode("RETEG_ID", 20, namespace = "eing"))
