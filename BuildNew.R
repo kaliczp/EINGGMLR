@@ -47,7 +47,7 @@ BuildNew <- function(coords, file = "gmlwithmeta.gml", currfid = round(abs(rnorm
     parcelExterior <- newXMLNode("exterior", parent=parcelPolygon, namespace = "gml")
     parcelRing <- newXMLNode("LinearRing", parent=parcelExterior, namespace = "gml")
     addAttributes(parcelRing, srsDimension = 2)
-    addChildren(parcelRing, newXMLNode("posList", coords, namespace = "gml"))
+    addChildren(parcelRing, newXMLNode("posList", paste(coords, collapse = " "), namespace = "gml"))
     ## Save gml
     saveXML(gmlwithmeta, file, prefix='<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n')
 }
