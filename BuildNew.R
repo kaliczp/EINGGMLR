@@ -41,6 +41,13 @@ BuildNew <- function(coords, file = "gmlwithmeta.gml", currfid = round(abs(rnorm
     addChildren(parcelNode, newXMLNode("IRANY", 0, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("MUVEL_AG", 4557, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("JOGI_TERULET", 14885, namespace = "eing"))
+    parcelGeometry <- newXMLNode("geometry", parent=parcelNode, namespace = "eing")
+    parcelPolygon <- newXMLNode("Polygon", parent=parcelGeometry, namespace = "gml")
+    addAttributes(parcelPolygon, srsDimension = 2, srsName = srsName) 
+    parcelExterior <- newXMLNode("exterior", parent=parcelPolygon, namespace = "gml")
+    parcelRing <- newXMLNode("LinearRing", parent=parcelExterior, namespace = "gml")
+    addAttributes(parcelRing, srsDimension = 2)
+    addChildren(parcelRing, newXMLNode("posList", coords, namespace = "gml"))
     ## Save gml
     saveXML(gmlwithmeta, file, prefix='<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n')
 }
