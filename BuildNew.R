@@ -1,4 +1,4 @@
-BuildNew <- function(coords, file = "gmlwithmeta.gml", currfid = round(abs(rnorm(1))*10^14)) {
+BuildNew <- function(coords, file = "gmlwithmeta.gml", currfid = round(abs(rnorm(1))*10^14), adminarea = 1147) {
     require(XML)
     srsName <- "urn:x-ogc:def:crs:EPSG:23700"
     ## Coordinates prepcocessing
@@ -44,7 +44,7 @@ BuildNew <- function(coords, file = "gmlwithmeta.gml", currfid = round(abs(rnorm
     addChildren(parcelNode, newXMLNode("SZINT", 0, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("IRANY", 0, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("MUVEL_AG", 4557, namespace = "eing")) # Kivett
-    addChildren(parcelNode, newXMLNode("JOGI_TERULET", 14885, namespace = "eing"))
+    addChildren(parcelNode, newXMLNode("JOGI_TERULET", adminarea, namespace = "eing"))
     parcelGeometry <- newXMLNode("geometry", parent=parcelNode, namespace = "eing")
     parcelPolygon <- newXMLNode("Polygon", parent=parcelGeometry, namespace = "gml")
     addAttributes(parcelPolygon, srsDimension = 2, srsName = srsName) 
