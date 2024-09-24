@@ -3,6 +3,8 @@ BuildNew <- function(coords, file = "gmlwithmeta.gml", currfid = round(abs(rnorm
     srsName <- "urn:x-ogc:def:crs:EPSG:23700"
     ## Coordinates prepcocessing
     coords.matrix <- matrix(coords, ncol = 2, byrow = TRUE)
+    ## Remove duplicated points
+    coords.matrix <- coords.matrix[!duplicated(coords.matrix),]
     ## Meta data creation
     newgml <- xmlTree("gml:FeatureCollection", namespaces = list(eing = "eing.foldhivatal.hu",
                                                              gml = "http://www.opengis.net/gml",
