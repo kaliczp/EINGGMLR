@@ -55,9 +55,37 @@ BuildNew <- function(coords, file = "gmlwithmeta.gml", currfid = round(abs(rnorm
     ### Points
     ## Random point geneeration related to original
     currfidother <- currfid + round(abs(rnorm(1))*10^4)
+    ## Address coordinate
+    addresscoordpoint <- round(colMeans(coords.matrix))
+    pointNode <- newXMLNode("CIMKOORDINATA", parent=metadataNode, namespace = "eing")
+    addAttributes(pointNode, "gml:id" = paste0("fid-", currfidother))
+    pointBounded <- newXMLNode("boundedBy", parent=pointNode, namespace = "gml")
+    pointEnvelope <- newXMLNode("Envelope", parent=pointBounded, namespace = "gml")
+    addAttributes(pointEnvelope, srsDimension = 2, srsName = srsName)
+    addChildren(pointEnvelope, newXMLNode("lowerCorner", paste(addresscoordpoint, collapse = " "), namespace = "gml"))
+    addChildren(pointEnvelope, newXMLNode("upperCorner", paste(addresscoordpoint, collapse = " "), namespace = "gml"))
+    addChildren(pointNode, newXMLNode("GEOBJ_ID", currfidother, namespace = "eing"))
+    addChildren(pointNode, newXMLNode("OBJ_FELS", "AD01", namespace = "eing"))
+    addChildren(pointNode, newXMLNode("RETEG_ID", 52, namespace = "eing"))
+    addChildren(pointNode, newXMLNode("RETEG_NEV", "Címkoordináták" , namespace = "eing"))
+    addChildren(pointNode, newXMLNode("TELEPULES_ID", 3400, namespace = "eing"))
+    addChildren(pointNode, newXMLNode("HRSZ", hrsz, namespace = "eing"))
+    addChildren(pointNode, newXMLNode("FELIRAT", 1, namespace = "eing"))
+    addChildren(pointNode, newXMLNode("SZINT", 0, namespace = "eing"))
+    addChildren(pointNode, newXMLNode("IRANY", 0, namespace = "eing"))
+    addChildren(pointNode, newXMLNode("PONTSZAM", 1, namespace = "eing"))
+    addChildren(pointNode, newXMLNode("PONTKOD", 5411, namespace = "eing"))
+    addChildren(pointNode, newXMLNode("JELKULCS", 36, namespace = "eing"))
+    addChildren(pointNode, newXMLNode("FRSZ_ID", currfid, namespace = "eing"))
+    pointGeometry <- newXMLNode("geometry", parent=pointNode, namespace = "eing")
+    pointPoint <- newXMLNode("Point", parent=pointGeometry, namespace = "gml")
+    addAttributes(pointPoint, srsDimension = 2, srsName = srsName)
+    addChildren(pointPoint, newXMLNode("pos", paste(addresscoordpoint, collapse = " "), namespace = "gml"))
+    ## Initial point id
     pontszam <- 52421
     ## Points assigned to the polygon
     for(actualpoints in 1:nrow(coords.matrix)) {
+        currfidother <- currfid + sample(1:5, 1)
         actualpoint <- coords.matrix[actualpoints,]
         pointNode <- newXMLNode("RESZLETPONTOK", parent=metadataNode, namespace = "eing")
         addAttributes(pointNode, "gml:id" = paste0("fid-", currfidother))
@@ -84,7 +112,6 @@ BuildNew <- function(coords, file = "gmlwithmeta.gml", currfid = round(abs(rnorm
         addAttributes(pointPoint, srsDimension = 2, srsName = srsName)
         addChildren(pointPoint, newXMLNode("pos", paste(actualpoint, collapse = " "), namespace = "gml"))
         pontszam <- pontszam + sample(1:5, 1)
-        currfidother <- currfid + sample(1:5, 1)
     }
     ## Save gml
     saveXML(gmlwithmeta, file, prefix='<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n')
