@@ -1,4 +1,4 @@
-BuildNew <- function(coords, file = "gmlwithmeta.gml", currfid = round(abs(rnorm(1))*10^14), adminarea = 1147) {
+BuildNew <- function(coords, file = "gmlwithmeta.gml", currfid = round(abs(rnorm(1))*10^14), hrsz = 110, adminarea = 1147) {
     require(XML)
     srsName <- "urn:x-ogc:def:crs:EPSG:23700"
     ## Coordinates prepcocessing
@@ -37,9 +37,9 @@ BuildNew <- function(coords, file = "gmlwithmeta.gml", currfid = round(abs(rnorm
     addChildren(parcelNode, newXMLNode("OBJ_FELS", "BD01", namespace = "eing"))
     addChildren(parcelNode, newXMLNode("RETEG_ID", 20, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("RETEG_NEV", "Földrészletek" , namespace = "eing"))
-    addChildren(parcelNode, newXMLNode("TELEPULES_ID", 1110, namespace = "eing"))
+    addChildren(parcelNode, newXMLNode("TELEPULES_ID", 3400, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("FEKVES", 3719, namespace = "eing")) # Belter
-    addChildren(parcelNode, newXMLNode("HRSZ", 110, namespace = "eing"))
+    addChildren(parcelNode, newXMLNode("HRSZ", hrsz, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("FELIRAT", 110, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("SZINT", 0, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("IRANY", 0, namespace = "eing"))
@@ -70,7 +70,7 @@ BuildNew <- function(coords, file = "gmlwithmeta.gml", currfid = round(abs(rnorm
         addChildren(pointNode, newXMLNode("OBJ_FELS", "AC02", namespace = "eing"))
         addChildren(pointNode, newXMLNode("RETEG_ID", 6, namespace = "eing"))
         addChildren(pointNode, newXMLNode("RETEG_NEV", "Részletpontok" , namespace = "eing"))
-        addChildren(pointNode, newXMLNode("TELEPULES_ID", 1110, namespace = "eing"))
+        addChildren(pointNode, newXMLNode("TELEPULES_ID", 3400, namespace = "eing"))
         addChildren(pointNode, newXMLNode("HRSZ", namespace = "eing"))
         addChildren(pointNode, newXMLNode("FELIRAT", pontszam, namespace = "eing"))
         addChildren(pointNode, newXMLNode("SZINT", 0, namespace = "eing"))
