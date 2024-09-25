@@ -1,4 +1,4 @@
-BuildNew <- function(poly, file = "gmlwithmeta.gml", currfid = round(abs(rnorm(1))*10^14), hrsz = 110, adminarea = 1147) {
+BuildNew <- function(poly, file = "gmlwithmeta.gml", currfid = round(abs(rnorm(1))*10^14), hrsz = 110, adminarea = NULL) {
     require(XML)
     require(sf)
     ## CRS
@@ -8,6 +8,11 @@ BuildNew <- function(poly, file = "gmlwithmeta.gml", currfid = round(abs(rnorm(1
     coords <- as.numeric(t(coords.matrix))
     ## Remove duplicated points
     coords.matrix <- coords.matrix[!duplicated(coords.matrix),]
+    ## Poly area calcualtion
+    if(is.null(adminarea)) {
+        ## Without error
+        adminarea <- round(st_area(poly))
+    }
     ## Meta data creation
     newgml <- xmlTree("gml:FeatureCollection", namespaces = list(eing = "eing.foldhivatal.hu",
                                                              gml = "http://www.opengis.net/gml",
