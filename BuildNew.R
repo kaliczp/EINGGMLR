@@ -1,8 +1,11 @@
-BuildNew <- function(coords, file = "gmlwithmeta.gml", currfid = round(abs(rnorm(1))*10^14), hrsz = 110, adminarea = 1147) {
+BuildNew <- function(poly, file = "gmlwithmeta.gml", currfid = round(abs(rnorm(1))*10^14), hrsz = 110, adminarea = 1147) {
     require(XML)
+    require(sf)
+    ## CRS
     srsName <- "urn:x-ogc:def:crs:EPSG:23700"
     ## Coordinates prepcocessing
-    coords.matrix <- matrix(coords, ncol = 2, byrow = TRUE)
+    coords.matrix <- round(st_coordinates(poly)[, c("X","Y")], 2)
+    coords <- as.numeric(t(coords.matrix))
     ## Remove duplicated points
     coords.matrix <- coords.matrix[!duplicated(coords.matrix),]
     ## Meta data creation
