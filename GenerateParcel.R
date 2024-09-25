@@ -1,0 +1,5 @@
+library(sf)
+p1 <- rbind(c(0,0), c(15,0), c(15,80), c(0,80), c(0,0))
+pol1 <- st_polygon(list(p1))
+rot <- function(a) matrix(c(cos(a), sin(a), -sin(a), cos(a)), 2, 2)
+pol1tr <- pol1*rot(pi/8) + + c(165800,350000)
