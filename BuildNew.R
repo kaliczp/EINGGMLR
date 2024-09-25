@@ -108,7 +108,11 @@ BuildNew <- function(poly, file = "gmlwithmeta.gml", currfid = round(abs(rnorm(1
         addChildren(pointNode, newXMLNode("IRANY", 0, namespace = "eing"))
         addChildren(pointNode, newXMLNode("MAGASSAG", 0, namespace = "eing"))
         addChildren(pointNode, newXMLNode("PONTSZAM", pontszam, namespace = "eing"))
-        addChildren(pointNode, newXMLNode("PONTKOD", 4236, namespace = "eing"))
+        if(actualpoints < 3) {
+            addChildren(pointNode, newXMLNode("PONTKOD", 4136, namespace = "eing"))
+        } else {
+            addChildren(pointNode, newXMLNode("PONTKOD", 4236, namespace = "eing"))
+        }
         addChildren(pointNode, newXMLNode("JELKULCS", 0, namespace = "eing"))
         pointGeometry <- newXMLNode("geometry", parent=pointNode, namespace = "eing")
         pointPoint <- newXMLNode("Point", parent=pointGeometry, namespace = "gml")

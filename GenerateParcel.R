@@ -1,6 +1,5 @@
 library(sf)
 
-# studpos 0:
 studpos <- 30
 width <- 15
 length <-80
