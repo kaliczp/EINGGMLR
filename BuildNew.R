@@ -48,7 +48,7 @@ BuildNew <- function(poly, file = "gmlwithmeta.gml", currfid = round(abs(rnorm(1
     addChildren(parcelNode, newXMLNode("TELEPULES_ID", 3400, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("FEKVES", 3719, namespace = "eing")) # Belter
     addChildren(parcelNode, newXMLNode("HRSZ", hrsz, namespace = "eing"))
-    addChildren(parcelNode, newXMLNode("FELIRAT", 110, namespace = "eing"))
+    addChildren(parcelNode, newXMLNode("FELIRAT", hrsz, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("SZINT", 0, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("IRANY", 0, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("MUVEL_AG", 4557, namespace = "eing")) # Kivett
