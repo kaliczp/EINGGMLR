@@ -107,6 +107,7 @@ BuildNew <- function(poly, file = "gmlwithmeta.gml", currfid = round(abs(rnorm(1
             addChildren(pointNode, newXMLNode("OBJ_FELS", "AC01", namespace = "eing"))
         } else {
         addChildren(pointNode, newXMLNode("OBJ_FELS", "AC02", namespace = "eing"))
+        }
         addChildren(pointNode, newXMLNode("RETEG_ID", 6, namespace = "eing"))
         addChildren(pointNode, newXMLNode("RETEG_NEV", "Részletpontok" , namespace = "eing"))
         addChildren(pointNode, newXMLNode("TELEPULES_ID", 3400, namespace = "eing"))
