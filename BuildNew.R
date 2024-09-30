@@ -1,4 +1,4 @@
-BuildNew <- function(poly, file = "gmlwithmeta.gml", currfid = round(abs(rnorm(1))*10^14), hrsz = 110, adminarea = NULL) {
+BuildNew <- function(poly, file = NULL, currfid = round(abs(rnorm(1))*10^14), hrsz = 110, adminarea = NULL) {
     require(XML)
     require(sf)
     ## CRS
@@ -131,5 +131,9 @@ BuildNew <- function(poly, file = "gmlwithmeta.gml", currfid = round(abs(rnorm(1
         pontszam <- pontszam + sample(1:5, 1)
     }
     ## Save gml
-    saveXML(gmlwithmeta, file, prefix='<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n')
+    if(is.null(file)) {
+        saveXML(gmlwithmeta, encoding = "UTF-8")
+    } else {
+        saveXML(gmlwithmeta, file, prefix='<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n', encoding = "UTF-8")
+    }
 }
