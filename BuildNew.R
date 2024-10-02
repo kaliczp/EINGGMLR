@@ -64,7 +64,7 @@ BuildNew <- function(poly, file = NULL, currfid = round(abs(rnorm(1))*10^14), hr
     ## Random point geneeration related to original
     currfidother <- currfid + round(abs(rnorm(1))*10^4)
     ## Address coordinate
-    addresscoordpoint <- round(colMeans(coords.matrix))
+    addresscoordpoint <- round(st_centroid(poly))
     pointNode <- newXMLNode("CIMKOORDINATA", parent=metadataNode, namespace = "eing")
     addAttributes(pointNode, "gml:id" = paste0("fid-", currfidother))
     pointBounded <- newXMLNode("boundedBy", parent=pointNode, namespace = "gml")
