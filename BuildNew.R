@@ -23,7 +23,9 @@ BuildNew <- function(poly, file = NULL, currfid = round(abs(rnorm(1))*10^14), hr
     newgml$addNode("GenericMetaData", close = FALSE)
     newgml$setNamespace(NULL)
     newgml$addNode("MetaDataList", close = FALSE)
-    newgml$addNode("gmlID", "691da01c-7911-45a7-b831-bc594bfaca16")
+    newgml$addNode("gmlID", paste0(c("691da01c-7911-45a7-b831-",
+                                     sample(c(1:9, letters[1:6]), size = 12, replace = TRUE)),
+                                     collapse = "")
     newgml$addNode("gmlExportDate", round(as.numeric(Sys.time())*1000))
     newgml$addNode("gmlGeobjIds", currfid)
     newgml$addNode("xsdVersion", 2.3)
