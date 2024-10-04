@@ -1,8 +1,16 @@
-BuildNew <- function(poly, file = NULL, currfid = round(abs(rnorm(1))*10^14), hrsz = 110, adminarea = NULL) {
+BuildNew <- function(poly, currpoly, file = NULL, hrsz = 110, adminarea = NULL) {
     require(XML)
     require(sf)
     ## CRS
     srsName <- "urn:x-ogc:def:crs:EPSG:23700"
+    ## Number of polys
+    nrpoly <- length(poly)
+    ## Check interested poly inside the region
+    stopifnot(nrpoly >= currpoly)
+    ## Generate fids
+    allfid <- round(abs(rnorm(1))*10^14) +
+        round(abs(rnorm(nrpoly, sd = 0.01)*10^4))
+    currfid <- allfid[curpoly]
     ## Coordinates prepcocessing
     coords.matrix <- round(st_coordinates(poly)[, c("X","Y")], 2)
     coords <- as.numeric(t(coords.matrix))
@@ -25,7 +33,7 @@ BuildNew <- function(poly, file = NULL, currfid = round(abs(rnorm(1))*10^14), hr
     newgml$addNode("MetaDataList", close = FALSE)
     newgml$addNode("gmlID", paste0(c("691da01c-7911-45a7-b831-",
                                      sample(c(1:9, letters[1:6]), size = 12, replace = TRUE)),
-                                     collapse = "")
+                                   collapse = ""))
     newgml$addNode("gmlExportDate", round(as.numeric(Sys.time())*1000))
     newgml$addNode("gmlGeobjIds", currfid)
     newgml$addNode("xsdVersion", 2.3)

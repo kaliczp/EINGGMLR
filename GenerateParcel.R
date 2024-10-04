@@ -16,5 +16,4 @@ polmult <- st_sfc(pol1,
 rot <- function(a) matrix(c(cos(a), sin(a), -sin(a), cos(a)), 2, 2)
 pol1tr <- pol1*rot(studpos * pi/40) + c(864000, 100000)
 aktfilename <- paste0(gsub(" ", "", students[studentnr,]), ".gml")
-BuildNew(pol1tr, file = aktfilename, hrsz = sample(11:280,1))
-
+BuildNew(pol1tr, currpoly = 2, file = aktfilename, hrsz = sample(11:280,1))
