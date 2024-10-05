@@ -10,7 +10,7 @@ BuildNew <- function(poly, currpoly, file = NULL, hrsz = 110, adminarea = NULL) 
     ## Generate fids
     allfid <- round(abs(rnorm(1))*10^14) +
         round(abs(rnorm(nrpoly, sd = 0.01)*10^4))
-    currfid <- allfid[curpoly]
+    currfid <- allfid[currpoly]
     ## Coordinates prepcocessing
     coords.matrix <- round(st_coordinates(poly)[, c("X","Y")], 2)
     coords <- as.numeric(t(coords.matrix))
