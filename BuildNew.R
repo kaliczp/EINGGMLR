@@ -11,16 +11,6 @@ BuildNew <- function(poly, currpoly, file = NULL, hrsz = 110, adminarea = NULL) 
     allfid <- round(abs(rnorm(1))*10^14) +
         round(abs(rnorm(nrpoly, sd = 0.01)*10^4))
     currfid <- allfid[currpoly]
-    ## Coordinates prepcocessing
-    coords.matrix <- round(st_coordinates(poly)[, c("X","Y")], 2)
-    coords <- as.numeric(t(coords.matrix))
-    ## Remove duplicated points
-    coords.matrix <- coords.matrix[!duplicated(coords.matrix),]
-    ## Poly area calcualtion
-    if(is.null(adminarea)) {
-        ## Without error
-        adminarea <- round(st_area(poly))
-    }
     ## Meta data creation
     newgml <- xmlTree("gml:FeatureCollection", namespaces = list(eing = "eing.foldhivatal.hu",
                                                              gml = "http://www.opengis.net/gml",
@@ -43,6 +33,18 @@ BuildNew <- function(poly, currpoly, file = NULL, hrsz = 110, adminarea = NULL) 
     gmlwithmeta <- xmlTreeParse(saveXML(newgml), useInternalNodes = T)
     root <- xmlRoot(gmlwithmeta)
     metadataNode <- newXMLNode("featureMembers", parent = root, namespace = "gml")
+### Data processing
+    actualpoly <- currpoly
+    ## Coordinates prepcocessing
+    coords.matrix <- round(st_coordinates(poly[actualpoly])[, c("X","Y")], 2)
+    coords <- as.numeric(t(coords.matrix))
+    ## Remove duplicated points
+    coords.matrix <- coords.matrix[!duplicated(coords.matrix),]
+    ## Poly area calcualtion
+    if(is.null(adminarea)) {
+        ## Without error
+        adminarea <- round(st_area(poly[actualpoly]))
+    }
     ## Create a parcel node
     parcelNode = newXMLNode("FOLDRESZLETEK", parent=metadataNode, namespace = "eing")
     addAttributes(parcelNode, "gml:id" = paste0("fid-", currfid))
@@ -74,7 +76,7 @@ BuildNew <- function(poly, currpoly, file = NULL, hrsz = 110, adminarea = NULL) 
     ## Random point geneeration related to original
     currfidother <- currfid + round(abs(rnorm(1))*10^4)
     ## Address coordinate
-    addresscoordpoint <- round(st_centroid(poly))
+    addresscoordpoint <- round(st_coordinates(st_centroid(poly[actualpoly])))
     pointNode <- newXMLNode("CIMKOORDINATA", parent=metadataNode, namespace = "eing")
     addAttributes(pointNode, "gml:id" = paste0("fid-", currfidother))
     pointBounded <- newXMLNode("boundedBy", parent=pointNode, namespace = "gml")
