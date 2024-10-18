@@ -1,4 +1,4 @@
-BuildNew <- function(poly, currpoly, file = NULL, hrsz = 110, adminarea = NULL) {
+BuildNew <- function(poly, currpoly, street, file = NULL, hrsz = 110, adminarea = NULL) {
     require(XML)
     require(sf)
     ## CRS
@@ -56,13 +56,29 @@ BuildNew <- function(poly, currpoly, file = NULL, hrsz = 110, adminarea = NULL) 
     addChildren(parcelEnvelope, newXMLNode("lowerCorner", paste(min(coords.matrix[,1]), min(coords.matrix[,2])), namespace = "gml"))
     addChildren(parcelEnvelope, newXMLNode("upperCorner", paste(max(coords.matrix[,1]), max(coords.matrix[,2])), namespace = "gml"))
     addChildren(parcelNode, newXMLNode("GEOBJ_ID", allfid[actualpoly], namespace = "eing"))
+        if(actualpoly == street) {
+            addChildren(parcelNode, newXMLNode("OBJ_FELS", "BC01", namespace = "eing"))
+        } else {
     addChildren(parcelNode, newXMLNode("OBJ_FELS", "BD01", namespace = "eing"))
+        }
     addChildren(parcelNode, newXMLNode("RETEG_ID", 20, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("RETEG_NEV", "Földrészletek" , namespace = "eing"))
     addChildren(parcelNode, newXMLNode("TELEPULES_ID", 3400, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("FEKVES", 3719, namespace = "eing")) # Belter
-    addChildren(parcelNode, newXMLNode("HRSZ", hrsz + actualpoly, namespace = "eing"))
-    addChildren(parcelNode, newXMLNode("FELIRAT", hrsz + actualpoly, namespace = "eing"))
+        if(actualpoly == street) {
+            streethrsz <- hrsz - sample(10:20,1)
+            addChildren(parcelNode, newXMLNode("HRSZ", streethrsz, namespace = "eing"))
+
+            addChildren(parcelNode, newXMLNode("FELIRAT", paste0(
+                                                              "(",
+                                                              streethrsz,
+                                                              ")"),
+                                               namespace = "eing"))
+        } else {
+            parcelhrsz <- hrsz + actualpoly
+            addChildren(parcelNode, newXMLNode("HRSZ", parcelhrsz, namespace = "eing"))
+            addChildren(parcelNode, newXMLNode("FELIRAT", parcelhrsz, namespace = "eing"))
+        }
     addChildren(parcelNode, newXMLNode("SZINT", 0, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("IRANY", 0, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("MUVEL_AG", 4557, namespace = "eing")) # Kivett
