@@ -43,3 +43,4 @@ rot <- function(a) matrix(c(cos(a), sin(a), -sin(a), cos(a)), 2, 2)
 polmulttr <- polmult*rot(studpos * pi/40) + c(864000, 100000)
 aktfilename <- paste0(gsub(" ", "", students[studentnr,]), ".gml")
 BuildNew(polmulttr, currpoly = 2, street = 7, file = aktfilename, hrsz = sample(21:380,1))
+}
