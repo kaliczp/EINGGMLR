@@ -34,7 +34,9 @@ BuildNew <- function(poly, currpoly, file = NULL, hrsz = 110, adminarea = NULL) 
     root <- xmlRoot(gmlwithmeta)
     metadataNode <- newXMLNode("featureMembers", parent = root, namespace = "gml")
 ### Data processing
-    actualpoly <- currpoly
+    ## Selected poly last in the order because point generation
+    orderedpoly <- c(1:(currpoly-1), (currpoly+1):nrpoly, currpoly)
+    for(actualpoly in orderedpoly) {
     ## Coordinates prepcocessing
     coords.matrix <- round(st_coordinates(poly[actualpoly])[, c("X","Y")], 2)
     coords <- as.numeric(t(coords.matrix))
@@ -47,20 +49,20 @@ BuildNew <- function(poly, currpoly, file = NULL, hrsz = 110, adminarea = NULL) 
     }
     ## Create a parcel node
     parcelNode = newXMLNode("FOLDRESZLETEK", parent=metadataNode, namespace = "eing")
-    addAttributes(parcelNode, "gml:id" = paste0("fid-", currfid))
+    addAttributes(parcelNode, "gml:id" = paste0("fid-", allfid[actualpoly]))
     parcelBounded <- newXMLNode("boundedBy", parent=parcelNode, namespace = "gml")
     parcelEnvelope <- newXMLNode("Envelope", parent=parcelBounded, namespace = "gml")
     addAttributes(parcelEnvelope, srsDimension = 2, srsName = srsName) 
     addChildren(parcelEnvelope, newXMLNode("lowerCorner", paste(min(coords.matrix[,1]), min(coords.matrix[,2])), namespace = "gml"))
     addChildren(parcelEnvelope, newXMLNode("upperCorner", paste(max(coords.matrix[,1]), max(coords.matrix[,2])), namespace = "gml"))
-    addChildren(parcelNode, newXMLNode("GEOBJ_ID", currfid, namespace = "eing"))
+    addChildren(parcelNode, newXMLNode("GEOBJ_ID", allfid[actualpoly], namespace = "eing"))
     addChildren(parcelNode, newXMLNode("OBJ_FELS", "BD01", namespace = "eing"))
     addChildren(parcelNode, newXMLNode("RETEG_ID", 20, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("RETEG_NEV", "Földrészletek" , namespace = "eing"))
     addChildren(parcelNode, newXMLNode("TELEPULES_ID", 3400, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("FEKVES", 3719, namespace = "eing")) # Belter
-    addChildren(parcelNode, newXMLNode("HRSZ", hrsz, namespace = "eing"))
-    addChildren(parcelNode, newXMLNode("FELIRAT", hrsz, namespace = "eing"))
+    addChildren(parcelNode, newXMLNode("HRSZ", hrsz + actualpoly, namespace = "eing"))
+    addChildren(parcelNode, newXMLNode("FELIRAT", hrsz + actualpoly, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("SZINT", 0, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("IRANY", 0, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("MUVEL_AG", 4557, namespace = "eing")) # Kivett
@@ -72,11 +74,12 @@ BuildNew <- function(poly, currpoly, file = NULL, hrsz = 110, adminarea = NULL) 
     parcelRing <- newXMLNode("LinearRing", parent=parcelExterior, namespace = "gml")
     addAttributes(parcelRing, srsDimension = 2)
     addChildren(parcelRing, newXMLNode("posList", paste(coords, collapse = " "), namespace = "gml"))
+        }
     ### Points
     ## Random point geneeration related to original
     currfidother <- currfid + round(abs(rnorm(1))*10^4)
     ## Address coordinate
-    addresscoordpoint <- round(st_coordinates(st_centroid(poly[actualpoly])))
+    addresscoordpoint <- round(st_coordinates(st_centroid(poly[currpoly])))
     pointNode <- newXMLNode("CIMKOORDINATA", parent=metadataNode, namespace = "eing")
     addAttributes(pointNode, "gml:id" = paste0("fid-", currfidother))
     pointBounded <- newXMLNode("boundedBy", parent=pointNode, namespace = "gml")
@@ -89,7 +92,7 @@ BuildNew <- function(poly, currpoly, file = NULL, hrsz = 110, adminarea = NULL) 
     addChildren(pointNode, newXMLNode("RETEG_ID", 52, namespace = "eing"))
     addChildren(pointNode, newXMLNode("RETEG_NEV", "Címkoordináták" , namespace = "eing"))
     addChildren(pointNode, newXMLNode("TELEPULES_ID", 3400, namespace = "eing"))
-    addChildren(pointNode, newXMLNode("HRSZ", hrsz, namespace = "eing"))
+    addChildren(pointNode, newXMLNode("HRSZ", hrsz + currpoly, namespace = "eing"))
     addChildren(pointNode, newXMLNode("FELIRAT", 1, namespace = "eing"))
     addChildren(pointNode, newXMLNode("SZINT", 0, namespace = "eing"))
     addChildren(pointNode, newXMLNode("IRANY", 0, namespace = "eing"))
