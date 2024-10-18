@@ -45,7 +45,7 @@ BuildNew <- function(poly, currpoly, file = NULL, hrsz = 110, adminarea = NULL) 
     ## Poly area calcualtion
     if(is.null(adminarea)) {
         ## Without error
-        adminarea <- round(st_area(poly[actualpoly]))
+        adminareagen <- round(st_area(poly[actualpoly]))
     }
     ## Create a parcel node
     parcelNode = newXMLNode("FOLDRESZLETEK", parent=metadataNode, namespace = "eing")
@@ -66,7 +66,7 @@ BuildNew <- function(poly, currpoly, file = NULL, hrsz = 110, adminarea = NULL) 
     addChildren(parcelNode, newXMLNode("SZINT", 0, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("IRANY", 0, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("MUVEL_AG", 4557, namespace = "eing")) # Kivett
-    addChildren(parcelNode, newXMLNode("JOGI_TERULET", adminarea, namespace = "eing"))
+    addChildren(parcelNode, newXMLNode("JOGI_TERULET", adminareagen, namespace = "eing"))
     parcelGeometry <- newXMLNode("geometry", parent=parcelNode, namespace = "eing")
     parcelPolygon <- newXMLNode("Polygon", parent=parcelGeometry, namespace = "gml")
     addAttributes(parcelPolygon, srsDimension = 2, srsName = srsName) 
