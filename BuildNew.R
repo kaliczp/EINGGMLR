@@ -1,4 +1,4 @@
-BuildNew <- function(poly, currpoly, street, file = NULL, hrsz = 110, adminarea = NULL) {
+BuildNew <- function(poly, currpoly, street, file = NULL, hrsz = 110, adminarea = NULL, angle = NULL) {
     require(XML)
     require(sf)
     ## CRS
@@ -34,6 +34,10 @@ BuildNew <- function(poly, currpoly, street, file = NULL, hrsz = 110, adminarea 
     root <- xmlRoot(gmlwithmeta)
     metadataNode <- newXMLNode("featureMembers", parent = root, namespace = "gml")
 ### Data processing
+    ## Text in horizontal, if not given agnle as argument
+    if(is.null(angle)) {
+        angle <- 0
+    }
     ## Selected poly last in the order because point generation
     orderedpoly <- c(1:(currpoly-1), (currpoly+1):nrpoly, currpoly)
     for(actualpoly in orderedpoly) {
@@ -80,7 +84,12 @@ BuildNew <- function(poly, currpoly, street, file = NULL, hrsz = 110, adminarea 
             addChildren(parcelNode, newXMLNode("FELIRAT", parcelhrsz, namespace = "eing"))
         }
     addChildren(parcelNode, newXMLNode("SZINT", 0, namespace = "eing"))
-    addChildren(parcelNode, newXMLNode("IRANY", 0, namespace = "eing"))
+        if(actualpoly == street) {
+            textangle <- angle + 270
+        } else {
+            textangle <- angle
+        }
+        addChildren(parcelNode, newXMLNode("IRANY", textangle, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("MUVEL_AG", 4557, namespace = "eing")) # Kivett
     addChildren(parcelNode, newXMLNode("JOGI_TERULET", adminareagen, namespace = "eing"))
     parcelGeometry <- newXMLNode("geometry", parent=parcelNode, namespace = "eing")
@@ -111,7 +120,7 @@ BuildNew <- function(poly, currpoly, street, file = NULL, hrsz = 110, adminarea 
     addChildren(pointNode, newXMLNode("HRSZ", hrsz + currpoly, namespace = "eing"))
     addChildren(pointNode, newXMLNode("FELIRAT", 1, namespace = "eing"))
     addChildren(pointNode, newXMLNode("SZINT", 0, namespace = "eing"))
-    addChildren(pointNode, newXMLNode("IRANY", 0, namespace = "eing"))
+    addChildren(pointNode, newXMLNode("IRANY", angle, namespace = "eing"))
     addChildren(pointNode, newXMLNode("PONTSZAM", 1, namespace = "eing"))
     addChildren(pointNode, newXMLNode("PONTKOD", 5411, namespace = "eing"))
     addChildren(pointNode, newXMLNode("JELKULCS", 36, namespace = "eing"))
@@ -146,7 +155,7 @@ BuildNew <- function(poly, currpoly, street, file = NULL, hrsz = 110, adminarea 
         addChildren(pointNode, newXMLNode("HRSZ", namespace = "eing"))
         addChildren(pointNode, newXMLNode("FELIRAT", pontszam, namespace = "eing"))
         addChildren(pointNode, newXMLNode("SZINT", 0, namespace = "eing"))
-        addChildren(pointNode, newXMLNode("IRANY", 0, namespace = "eing"))
+        addChildren(pointNode, newXMLNode("IRANY", angle, namespace = "eing"))
         addChildren(pointNode, newXMLNode("MAGASSAG", 0, namespace = "eing"))
         addChildren(pointNode, newXMLNode("PONTSZAM", pontszam, namespace = "eing"))
         if(actualpoints < 3) {

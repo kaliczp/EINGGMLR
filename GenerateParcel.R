@@ -41,6 +41,8 @@ polmultnostreet <- c(polmult, polmult + c(0, parcellength))
 polmult <- c(polmultnostreet, streetPol)
 rot <- function(a) matrix(c(cos(a), sin(a), -sin(a), cos(a)), 2, 2)
 polmulttr <- polmult*rot(studpos * pi/40) + c(864000, 100000)
+szovegszog <- studpos*180/40 - 90
 aktfilename <- paste0(gsub(" ", "", students[studentnr,]), ".gml")
-BuildNew(polmulttr, currpoly = 2, street = 7, file = aktfilename, hrsz = sample(21:380,1))
+BuildNew(polmulttr, currpoly = 2, street = 7, file = aktfilename, hrsz = sample(21:380,1),
+         angle = szovegszog)
 }
