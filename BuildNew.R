@@ -4,7 +4,7 @@ BuildNew <- function(poly, file = NULL, hrsz = 110, adminarea = NULL) {
     ## Selected poly
     currpoly <- which(poly$Selected)
     ## CRS
-    srsName <- "urn:x-ogc:def:crs:EPSG:23700"
+    srsName <- paste0("urn:x-ogc:def:crs:",st_crs(poly)$input)
     ## Number of polys
     nrpoly <- nrow(poly)
     ## Generate fids
