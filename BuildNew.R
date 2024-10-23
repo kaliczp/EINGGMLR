@@ -1,12 +1,12 @@
-BuildNew <- function(poly, currpoly, street, file = NULL, hrsz = 110, adminarea = NULL, angle = NULL) {
+BuildNew <- function(poly, file = NULL, hrsz = 110, adminarea = NULL) {
     require(XML)
     require(sf)
+    ## Selected poly
+    currpoly <- which(poly$Selected)
     ## CRS
     srsName <- "urn:x-ogc:def:crs:EPSG:23700"
     ## Number of polys
-    nrpoly <- length(poly)
-    ## Check interested poly inside the region
-    stopifnot(nrpoly >= currpoly)
+    nrpoly <- nrow(poly)
     ## Generate fids
     allfid <- round(abs(rnorm(1))*10^14) +
         round(abs(rnorm(nrpoly, sd = 0.01)*10^4))
@@ -34,22 +34,18 @@ BuildNew <- function(poly, currpoly, street, file = NULL, hrsz = 110, adminarea 
     root <- xmlRoot(gmlwithmeta)
     metadataNode <- newXMLNode("featureMembers", parent = root, namespace = "gml")
 ### Data processing
-    ## Text in horizontal, if not given agnle as argument
-    if(is.null(angle)) {
-        angle <- 0
-    }
     ## Selected poly last in the order because point generation
     orderedpoly <- c(1:(currpoly-1), (currpoly+1):nrpoly, currpoly)
     for(actualpoly in orderedpoly) {
     ## Coordinates prepcocessing
-    coords.matrix <- round(st_coordinates(poly[actualpoly])[, c("X","Y")], 2)
+    coords.matrix <- round(st_coordinates(poly[actualpoly,])[, c("X","Y")], 2)
     coords <- as.numeric(t(coords.matrix))
     ## Remove duplicated points
     coords.matrix <- coords.matrix[!duplicated(coords.matrix),]
     ## Poly area calcualtion
     if(is.null(adminarea)) {
         ## Without error
-        adminareagen <- round(st_area(poly[actualpoly]))
+        adminareagen <- round(st_area(poly[actualpoly,]))
     }
     ## Create a parcel node
     parcelNode = newXMLNode("FOLDRESZLETEK", parent=metadataNode, namespace = "eing")
@@ -60,16 +56,13 @@ BuildNew <- function(poly, currpoly, street, file = NULL, hrsz = 110, adminarea 
     addChildren(parcelEnvelope, newXMLNode("lowerCorner", paste(min(coords.matrix[,1]), min(coords.matrix[,2])), namespace = "gml"))
     addChildren(parcelEnvelope, newXMLNode("upperCorner", paste(max(coords.matrix[,1]), max(coords.matrix[,2])), namespace = "gml"))
     addChildren(parcelNode, newXMLNode("GEOBJ_ID", allfid[actualpoly], namespace = "eing"))
-        if(actualpoly == street) {
-            addChildren(parcelNode, newXMLNode("OBJ_FELS", "BC01", namespace = "eing"))
-        } else {
-    addChildren(parcelNode, newXMLNode("OBJ_FELS", "BD01", namespace = "eing"))
-        }
+        DATcode <- as.character(polmult.df[actualpoly,"OBJ_FELS", drop = TRUE])
+        addChildren(parcelNode, newXMLNode("OBJ_FELS", DATcode, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("RETEG_ID", 20, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("RETEG_NEV", "Földrészletek" , namespace = "eing"))
     addChildren(parcelNode, newXMLNode("TELEPULES_ID", 3400, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("FEKVES", 3719, namespace = "eing")) # Belter
-        if(actualpoly == street) {
+        if(DATcode == "BC01") {
             streethrsz <- hrsz - sample(10:20,1)
             addChildren(parcelNode, newXMLNode("HRSZ", streethrsz, namespace = "eing"))
 
@@ -84,11 +77,8 @@ BuildNew <- function(poly, currpoly, street, file = NULL, hrsz = 110, adminarea 
             addChildren(parcelNode, newXMLNode("FELIRAT", parcelhrsz, namespace = "eing"))
         }
     addChildren(parcelNode, newXMLNode("SZINT", 0, namespace = "eing"))
-        if(actualpoly == street) {
-            textangle <- angle + 270
-        } else {
-            textangle <- angle
-        }
+        ## Text angle
+        textangle <- as.character(polmult.df[actualpoly,"IRANY", drop = TRUE])
         addChildren(parcelNode, newXMLNode("IRANY", textangle, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("MUVEL_AG", 4557, namespace = "eing")) # Kivett
     addChildren(parcelNode, newXMLNode("JOGI_TERULET", adminareagen, namespace = "eing"))
@@ -104,7 +94,7 @@ BuildNew <- function(poly, currpoly, street, file = NULL, hrsz = 110, adminarea 
     ## Random point geneeration related to original
     currfidother <- currfid + round(abs(rnorm(1))*10^4)
     ## Address coordinate
-    addresscoordpoint <- round(st_coordinates(st_centroid(poly[currpoly])))
+    addresscoordpoint <- round(st_coordinates(st_centroid(poly[currpoly,])))
     pointNode <- newXMLNode("CIMKOORDINATA", parent=metadataNode, namespace = "eing")
     addAttributes(pointNode, "gml:id" = paste0("fid-", currfidother))
     pointBounded <- newXMLNode("boundedBy", parent=pointNode, namespace = "gml")
@@ -120,7 +110,7 @@ BuildNew <- function(poly, currpoly, street, file = NULL, hrsz = 110, adminarea 
     addChildren(pointNode, newXMLNode("HRSZ", hrsz + currpoly, namespace = "eing"))
     addChildren(pointNode, newXMLNode("FELIRAT", 1, namespace = "eing"))
     addChildren(pointNode, newXMLNode("SZINT", 0, namespace = "eing"))
-    addChildren(pointNode, newXMLNode("IRANY", angle, namespace = "eing"))
+    addChildren(pointNode, newXMLNode("IRANY", textangle, namespace = "eing"))
     addChildren(pointNode, newXMLNode("PONTSZAM", 1, namespace = "eing"))
     addChildren(pointNode, newXMLNode("PONTKOD", 5411, namespace = "eing"))
     addChildren(pointNode, newXMLNode("JELKULCS", 36, namespace = "eing"))
@@ -155,7 +145,7 @@ BuildNew <- function(poly, currpoly, street, file = NULL, hrsz = 110, adminarea 
         addChildren(pointNode, newXMLNode("HRSZ", namespace = "eing"))
         addChildren(pointNode, newXMLNode("FELIRAT", pontszam, namespace = "eing"))
         addChildren(pointNode, newXMLNode("SZINT", 0, namespace = "eing"))
-        addChildren(pointNode, newXMLNode("IRANY", angle, namespace = "eing"))
+        addChildren(pointNode, newXMLNode("IRANY", textangle, namespace = "eing"))
         addChildren(pointNode, newXMLNode("MAGASSAG", 0, namespace = "eing"))
         addChildren(pointNode, newXMLNode("PONTSZAM", pontszam, namespace = "eing"))
         if(actualpoints < 3) {

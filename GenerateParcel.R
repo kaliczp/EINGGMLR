@@ -37,16 +37,13 @@ streetcoordsOtherSide <- streetcoords[nrow(streetcoords):1,]
 streetcoordsOtherSide[,"Y"] <- sample(seq(-25,-15,by=0.1),1)
 streetcoordsOK <- rbind(streetcoords, streetcoordsOtherSide, streetcoords[1,])
 streetPol <- st_sfc(st_polygon(list(streetcoordsOK)))
-streetPol.df <- st_sf(data.frame(Selected = F, geom = polmult + c(0, parcellength)))
 ## Neighboring parcels second row
 nostreetPol.df <- st_sf(data.frame(Selected = F, geom = polmult + c(0, parcellength)))
 polmultnostreet.df <- rbind(polmult.df, nostreetPol.df)
 ## Add street
-polmult <- c(polmultnostreet, streetPol)
 polmult.df <- rbind(polmultnostreet.df, st_sf(data.frame(Selected = F, geom = streetPol)))
 polmult.df <- cbind(polmult.df, OBJ_FELS = c(rep("BD01", nrow(polmult.df)-1), "BC01"))
 rot <- function(a) matrix(c(cos(a), sin(a), -sin(a), cos(a)), 2, 2)
-polmulttr <- polmult*rot(studpos * pi/40) + c(864000, 100000)
 polmult.df$geometry<-polmult.df$geometry*rot(studpos * pi/40) + c(864000, 100000)
 st_crs(polmult.df) <- 23700
 szovegszog <- studpos*180/40 - 90
@@ -55,7 +52,8 @@ polmult.df <- cbind(polmult.df, IRANY = szovegszog)
 streetangle <- szovegszog + 270
 streetangle <- ifelse(streetangle > 360, streetangle - 360, streetangle)
 polmult.df[grep("BC", polmult.df[, "OBJ_FELS", drop = TRUE]), "IRANY"] <- streetangle
-aktfilename <- paste0(gsub(" ", "", students[studentnr,]), ".gml")
-BuildNew(polmulttr, currpoly = 2, street = 7, file = aktfilename, hrsz = sample(21:380,1),
-         angle = szovegszog)
+aktfilename <- paste0(gsub(" "rot <- function(a) matrix(c(cos(a), sin(a), -sin(a), cos(a)), 2, 2)
+polmult.df$geometry<-polmult.df$geometry*rot(studpos * pi/40) + c(864000, 100000)
+, "", students[studentnr,]), ".gml")
+BuildNew(polmult.df, file = aktfilename, hrsz = sample(21:380,1))
 }
