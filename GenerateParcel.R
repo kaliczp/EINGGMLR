@@ -39,8 +39,8 @@ streetcoordsOK <- rbind(streetcoords, streetcoordsOtherSide, streetcoords[1,])
 streetPol <- st_sfc(st_polygon(list(streetcoordsOK)))
 streetPol.df <- st_sf(data.frame(Selected = F, geom = polmult + c(0, parcellength)))
 ## Neighboring parcels second row
-polmultnostreet <- c(polmult, polmult + c(0, parcellength))
-polmultnostreet.df <- rbind(polmult.df, streetPol.df)
+nostreetPol.df <- st_sf(data.frame(Selected = F, geom = polmult + c(0, parcellength)))
+polmultnostreet.df <- rbind(polmult.df, nostreetPol.df)
 ## Add street
 polmult <- c(polmultnostreet, streetPol)
 polmult.df <- rbind(polmultnostreet.df, st_sf(data.frame(Selected = F, geom = streetPol)))
