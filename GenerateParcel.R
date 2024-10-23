@@ -6,6 +6,7 @@ for(studentnr in 1:nrow(students)){
 studpos <- studentnr + 10
 parcelwidth <- sample(seq(14,20,by=0.1),1)
 parcellength <- sample(seq(75,90,by=0.1),1)
+## First row of parcels
 p1 <- rbind(c(0,0), c(parcelwidth,0),
             c(parcelwidth,parcellength), c(0,parcellength), c(0,0))
 pol1 <- st_polygon(list(p1))
@@ -35,7 +36,7 @@ streetcoordsOtherSide <- streetcoords[nrow(streetcoords):1,]
 streetcoordsOtherSide[,"Y"] <- sample(seq(-25,-15,by=0.1),1)
 streetcoordsOK <- rbind(streetcoords, streetcoordsOtherSide, streetcoords[1,])
 streetPol <- st_sfc(st_polygon(list(streetcoordsOK)))
-## Neighboring parcels
+## Neighboring parcels second row
 polmultnostreet <- c(polmult, polmult + c(0, parcellength))
 ## Add street
 polmult <- c(polmultnostreet, streetPol)
