@@ -43,9 +43,39 @@ polmultnostreet.df <- rbind(polmult.df, nostreetPol.df)
 ## Add street
 polmult.df <- rbind(polmultnostreet.df, st_sf(data.frame(Selected = F, geom = streetPol)))
 polmult.df <- cbind(polmult.df, OBJ_FELS = c(rep("BD01", nrow(polmult.df)-1), "BC01"))
+### Buildings generation
+## Selected parcel width
+selected.coord <- st_coordinates(polmult.df[which(polmult.df$Selected),]$geometry)[,"X"]
+buildleft <- min(selected.coord) + sample(seq(0.5,2,by=0.2),1)
+buildwidth <- 9.5 + sample(c(0, 0.5, 1), 1)
+buildlength <- 10 + sample(c(0, 0.5, 1, 1.5, 2, 2.5), 1)
+## Building polys
+## First building
+b1 <- rbind(c(buildleft,0),
+            c(buildleft + buildwidth,0),
+            c(buildleft + buildwidth, buildlength),
+            c(buildleft, buildlength),
+            c(buildleft,0))
+buildpol1 <- st_polygon(list(b1))
+## Second building
+buildlow <- buildlength + sample(1:10,1)
+buildwidth <- 5.5 + sample(c(0, 0.5, 1), 1)
+buildlength <- sample(8:15,1)
+b2 <- rbind(c(buildleft, buildlow),
+            c(buildleft + buildwidth, buildlow),
+            c(buildleft + buildwidth, buildlow + buildlength),
+            c(buildleft, buildlow + buildlength),
+            c(buildleft, buildlow))
+buildpol2 <- st_polygon(list(b2))
+## Put into one geometry
+builpolmult <- st_sfc(buildpol1, buildpol2)
+rbind(polmult.df, st_sf(data.frame(Selected = T, OBJ_FELS = c("CA01", "CA06")), geometry = builpolmult))
+## Rotate polys
 rot <- function(a) matrix(c(cos(a), sin(a), -sin(a), cos(a)), 2, 2)
 polmult.df$geometry<-polmult.df$geometry*rot(studpos * pi/40) + c(864000, 100000)
+## Add CRS
 st_crs(polmult.df) <- 23700
+## Text rotation angle
 szovegszog <- studpos*180/40 - 90
 szovegszog <- ifelse(szovegszog < 0, szovegszog + 360, szovegszog)
 polmult.df <- cbind(polmult.df, IRANY = szovegszog)
