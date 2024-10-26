@@ -82,8 +82,6 @@ polmult.df <- cbind(polmult.df, IRANY = szovegszog)
 streetangle <- szovegszog + 270
 streetangle <- ifelse(streetangle > 360, streetangle - 360, streetangle)
 polmult.df[grep("BC", polmult.df[, "OBJ_FELS", drop = TRUE]), "IRANY"] <- streetangle
-aktfilename <- paste0(gsub(" "rot <- function(a) matrix(c(cos(a), sin(a), -sin(a), cos(a)), 2, 2)
-polmult.df$geometry<-polmult.df$geometry*rot(studpos * pi/40) + c(864000, 100000)
-, "", students[studentnr,]), ".gml")
+aktfilename <- paste0(gsub(" ", "", students[studentnr,]), ".gml")
 BuildNew(polmult.df, file = aktfilename, hrsz = sample(21:380,1))
 }
