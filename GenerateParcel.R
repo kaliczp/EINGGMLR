@@ -69,7 +69,7 @@ b2 <- rbind(c(buildleft, buildlow),
 buildpol2 <- st_polygon(list(b2))
 ## Put into one geometry
 builpolmult <- st_sfc(buildpol1, buildpol2)
-rbind(polmult.df, st_sf(data.frame(Selected = T, OBJ_FELS = c("CA01", "CA06")), geometry = builpolmult))
+polmult.df <- rbind(polmult.df, st_sf(data.frame(Selected = T, OBJ_FELS = c("CA01", "CA06")), geometry = builpolmult))
 ## Rotate polys
 rot <- function(a) matrix(c(cos(a), sin(a), -sin(a), cos(a)), 2, 2)
 polmult.df$geometry<-polmult.df$geometry*rot(studpos * pi/40) + c(864000, 100000)

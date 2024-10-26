@@ -1,6 +1,15 @@
 BuildNew <- function(poly, file = NULL, hrsz = 110, adminarea = NULL) {
     require(XML)
     require(sf)
+    ## To prevent scientific notation
+    options(scipen=999)
+    ## Building?
+    DATcode <- as.vector(poly[, "OBJ_FELS", drop = TRUE])
+    DATclass <- substr(DATcode, start = 1, stop = 1 )
+    if(any(DATclass == "C")) {
+        epuletpoly <- poly[DATclass == "C",]
+        poly <- poly[!DATclass == "C",]
+            }
     ## Selected poly
     currpoly <- which(poly$Selected)
     ## CRS
@@ -56,13 +65,13 @@ BuildNew <- function(poly, file = NULL, hrsz = 110, adminarea = NULL) {
     addChildren(parcelEnvelope, newXMLNode("lowerCorner", paste(min(coords.matrix[,1]), min(coords.matrix[,2])), namespace = "gml"))
     addChildren(parcelEnvelope, newXMLNode("upperCorner", paste(max(coords.matrix[,1]), max(coords.matrix[,2])), namespace = "gml"))
     addChildren(parcelNode, newXMLNode("GEOBJ_ID", allfid[actualpoly], namespace = "eing"))
-        DATcode <- as.character(polmult.df[actualpoly,"OBJ_FELS", drop = TRUE])
-        addChildren(parcelNode, newXMLNode("OBJ_FELS", DATcode, namespace = "eing"))
+        actDATcode <- as.character(polmult.df[actualpoly,"OBJ_FELS", drop = TRUE])
+        addChildren(parcelNode, newXMLNode("OBJ_FELS", actDATcode, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("RETEG_ID", 20, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("RETEG_NEV", "Földrészletek" , namespace = "eing"))
     addChildren(parcelNode, newXMLNode("TELEPULES_ID", 3400, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("FEKVES", 3719, namespace = "eing")) # Belter
-        if(DATcode == "BC01") {
+        if(actDATcode == "BC01") {
             streethrsz <- hrsz - sample(10:20,1)
             addChildren(parcelNode, newXMLNode("HRSZ", streethrsz, namespace = "eing"))
 
@@ -159,6 +168,10 @@ BuildNew <- function(poly, file = NULL, hrsz = 110, adminarea = NULL) {
         addAttributes(pointPoint, srsDimension = 2, srsName = srsName)
         addChildren(pointPoint, newXMLNode("pos", paste(actualpoint, collapse = " "), namespace = "gml"))
         pontszam <- pontszam + sample(1:5, 1)
+    }
+### Building
+    if(any(DATclass == "C")) {
+        warning("Buildings exist!")
     }
     ## Save gml
     if(is.null(file)) {
