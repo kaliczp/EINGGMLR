@@ -87,7 +87,7 @@ BuildNew <- function(poly, file = NULL, hrsz = 110, adminarea = NULL) {
         }
     addChildren(parcelNode, newXMLNode("SZINT", 0, namespace = "eing"))
         ## Text angle
-        textangle <- as.character(polmult.df[actualpoly,"IRANY", drop = TRUE])
+        textangle <- as.character(poly[actualpoly,"IRANY", drop = TRUE])
         addChildren(parcelNode, newXMLNode("IRANY", textangle, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("MUVEL_AG", 4557, namespace = "eing")) # Kivett
     addChildren(parcelNode, newXMLNode("JOGI_TERULET", adminareagen, namespace = "eing"))
