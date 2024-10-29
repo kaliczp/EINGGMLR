@@ -109,7 +109,7 @@ BuildNew <- function(poly, file = NULL, hrsz = 110, adminarea = NULL) {
             buildcoords.matrix <- round(st_coordinates(epuletpoly[actbuildingpoly,])[, c("X","Y")], 2)
             buildcoords <- as.numeric(t(buildcoords.matrix))
             ## Remove duplicated points
-            buildcoords.matrix <- buildcoords.matrix[!duplicated(coords.matrix),]
+            buildcoords.matrix <- buildcoords.matrix[!duplicated(buildcoords.matrix),]
             ## Poly area calcualtion
             if(is.null(adminarea)) {
                 ## Without error
@@ -139,7 +139,7 @@ BuildNew <- function(poly, file = NULL, hrsz = 110, adminarea = NULL) {
             addChildren(parcelNode, newXMLNode("FEKVES", 3719, namespace = "eing")) # Belter
             buildhrsz <- hrsz + actualpoly
             addChildren(parcelNode, newXMLNode("HRSZ", parcelhrsz, namespace = "eing"))
-            addChildren(parcelNode, newXMLNode("FELIRAT", paste(actbuildingpoly,"ép"),
+            addChildren(parcelNode, newXMLNode("FELIRAT", paste(actbuildingpoly,"ép."),
                                                namespace = "eing"))
             addChildren(parcelNode, newXMLNode("SZINT", 0, namespace = "eing"))
             ## Text angle
@@ -156,6 +156,7 @@ BuildNew <- function(poly, file = NULL, hrsz = 110, adminarea = NULL) {
             addAttributes(parcelRing, srsDimension = 2)
             addChildren(parcelRing, newXMLNode("posList", paste(buildcoords, collapse = " "), namespace = "gml"))
             ## Add buildcoords.matrix coords.matrix
+            coords.matrix <- rbind(coords.matrix, buildcoords.matrix)
         }
 
     }
