@@ -128,6 +128,11 @@ BuildNew <- function(poly, file = NULL, hrsz = 110, adminarea = NULL) {
     pointPoint <- newXMLNode("Point", parent=pointGeometry, namespace = "gml")
     addAttributes(pointPoint, srsDimension = 2, srsName = srsName)
     addChildren(pointPoint, newXMLNode("pos", paste(addresscoordpoint, collapse = " "), namespace = "gml"))
+### Building
+    if(any(DATclass == "C")) {
+        warning("Buildings exist!")
+    }
+### Points generation
     ## Initial point id
     pontszam <- 52421
     ## Points assigned to the polygon
@@ -169,11 +174,7 @@ BuildNew <- function(poly, file = NULL, hrsz = 110, adminarea = NULL) {
         addChildren(pointPoint, newXMLNode("pos", paste(actualpoint, collapse = " "), namespace = "gml"))
         pontszam <- pontszam + sample(1:5, 1)
     }
-### Building
-    if(any(DATclass == "C")) {
-        warning("Buildings exist!")
-    }
-    ## Save gml
+### Save gml
     if(is.null(file)) {
         saveXML(gmlwithmeta, encoding = "UTF-8")
     } else {
