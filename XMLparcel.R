@@ -1,7 +1,7 @@
 parcels <- getNodeSet(test, "/gml:FeatureCollection/gml:featureMembers/eing:FOLDRESZLETEK")
-xmlGetAttr(parcels[[3]], "gml:id")
+xmlGetAttr(parcels[[1]], "gml:id")
 
-getChildrenStrings(parcels[[3]])['GEOBJ_ID']
+getChildrenStrings(parcels[[1]])['GEOBJ_ID']
 
 ParcCurrent <- xpathApply(test, "//gmlGeobjIds", xmlValue)
 
