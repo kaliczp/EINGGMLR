@@ -99,7 +99,67 @@ BuildNew <- function(poly, file = NULL, hrsz = 110, adminarea = NULL) {
     addAttributes(parcelRing, srsDimension = 2)
     addChildren(parcelRing, newXMLNode("posList", paste(coords, collapse = " "), namespace = "gml"))
         }
-    ### Points
+### Building
+    if(any(DATclass == "C")) {
+        warning("Buildings exist!")
+        buildnum <- nrow(epuletpoly)
+        buildfid <- currfid + round(abs(rnorm(buildnum))*10)
+        for(actbuildingpoly in 1:buildnum) {
+            ## Coordinates prepcocessing
+            buildcoords.matrix <- round(st_coordinates(epuletpoly[actbuildingpoly,])[, c("X","Y")], 2)
+            buildcoords <- as.numeric(t(buildcoords.matrix))
+            ## Remove duplicated points
+            buildcoords.matrix <- buildcoords.matrix[!duplicated(coords.matrix),]
+            ## Poly area calcualtion
+            if(is.null(adminarea)) {
+                ## Without error
+                adminareagen <- round(st_area(epuletpoly[actbuildingpoly,]))
+            }
+            ## Create a parcel node
+            parcelNode = newXMLNode("EPULETEK", parent=metadataNode, namespace = "eing")
+            addAttributes(parcelNode, "gml:id" = paste0("fid-", buildfid[actbuildingpoly]))
+            parcelBounded <- newXMLNode("boundedBy", parent=parcelNode, namespace = "gml")
+            parcelEnvelope <- newXMLNode("Envelope", parent=parcelBounded, namespace = "gml")
+            addAttributes(parcelEnvelope, srsDimension = 2, srsName = srsName) 
+            addChildren(parcelEnvelope, newXMLNode("lowerCorner",
+                                                   paste(min(buildcoords.matrix[,1]),
+                                                         min(buildcoords.matrix[,2])),
+                                                   namespace = "gml"))
+            addChildren(parcelEnvelope, newXMLNode("upperCorner",
+                                                   paste(max(buildcoords.matrix[,1]),
+                                                         max(buildcoords.matrix[,2])),
+                                                   namespace = "gml"))
+            addChildren(parcelNode, newXMLNode("GEOBJ_ID", buildfid[actbuildingpoly],
+                                               namespace = "eing"))
+            actDATcode <- as.character(epuletpoly[actbuildingpoly,"OBJ_FELS", drop = TRUE])
+            addChildren(parcelNode, newXMLNode("OBJ_FELS", actDATcode, namespace = "eing"))
+            addChildren(parcelNode, newXMLNode("RETEG_ID", 8, namespace = "eing"))
+            addChildren(parcelNode, newXMLNode("RETEG_NEV", "Épület" , namespace = "eing"))
+            addChildren(parcelNode, newXMLNode("TELEPULES_ID", 3400, namespace = "eing"))
+            addChildren(parcelNode, newXMLNode("FEKVES", 3719, namespace = "eing")) # Belter
+            buildhrsz <- hrsz + actualpoly
+            addChildren(parcelNode, newXMLNode("HRSZ", parcelhrsz, namespace = "eing"))
+            addChildren(parcelNode, newXMLNode("FELIRAT", paste(actbuildingpoly,"ép"),
+                                               namespace = "eing"))
+            addChildren(parcelNode, newXMLNode("SZINT", 0, namespace = "eing"))
+            ## Text angle
+            textangle <- as.character(poly[actualpoly,"IRANY", drop = TRUE])
+            addChildren(parcelNode, newXMLNode("IRANY", textangle, namespace = "eing"))
+            addChildren(parcelNode, newXMLNode("SORSZAM", actbuildingpoly, namespace = "eing"))
+            addChildren(parcelNode, newXMLNode("JOGI_TERULET", adminareagen, namespace = "eing"))
+            addChildren(parcelNode, newXMLNode("FRSZ_ID", allfid[currpoly], namespace = "eing"))
+            parcelGeometry <- newXMLNode("geometry", parent=parcelNode, namespace = "eing")
+            parcelPolygon <- newXMLNode("Polygon", parent=parcelGeometry, namespace = "gml")
+            addAttributes(parcelPolygon, srsDimension = 2, srsName = srsName) 
+            parcelExterior <- newXMLNode("exterior", parent=parcelPolygon, namespace = "gml")
+            parcelRing <- newXMLNode("LinearRing", parent=parcelExterior, namespace = "gml")
+            addAttributes(parcelRing, srsDimension = 2)
+            addChildren(parcelRing, newXMLNode("posList", paste(buildcoords, collapse = " "), namespace = "gml"))
+            ## Add buildcoords.matrix coords.matrix
+        }
+
+    }
+### Points
     ## Random point geneeration related to original
     currfidother <- currfid + round(abs(rnorm(1))*10^4)
     ## Address coordinate
@@ -128,10 +188,6 @@ BuildNew <- function(poly, file = NULL, hrsz = 110, adminarea = NULL) {
     pointPoint <- newXMLNode("Point", parent=pointGeometry, namespace = "gml")
     addAttributes(pointPoint, srsDimension = 2, srsName = srsName)
     addChildren(pointPoint, newXMLNode("pos", paste(addresscoordpoint, collapse = " "), namespace = "gml"))
-### Building
-    if(any(DATclass == "C")) {
-        warning("Buildings exist!")
-    }
 ### Points generation
     ## Initial point id
     pontszam <- 52421
