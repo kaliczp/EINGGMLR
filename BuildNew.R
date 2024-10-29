@@ -65,7 +65,7 @@ BuildNew <- function(poly, file = NULL, hrsz = 110, adminarea = NULL) {
     addChildren(parcelEnvelope, newXMLNode("lowerCorner", paste(min(coords.matrix[,1]), min(coords.matrix[,2])), namespace = "gml"))
     addChildren(parcelEnvelope, newXMLNode("upperCorner", paste(max(coords.matrix[,1]), max(coords.matrix[,2])), namespace = "gml"))
     addChildren(parcelNode, newXMLNode("GEOBJ_ID", allfid[actualpoly], namespace = "eing"))
-        actDATcode <- as.character(polmult.df[actualpoly,"OBJ_FELS", drop = TRUE])
+        actDATcode <- as.character(poly[actualpoly,"OBJ_FELS", drop = TRUE])
         addChildren(parcelNode, newXMLNode("OBJ_FELS", actDATcode, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("RETEG_ID", 20, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("RETEG_NEV", "Földrészletek" , namespace = "eing"))
