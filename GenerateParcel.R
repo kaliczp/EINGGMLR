@@ -48,14 +48,15 @@ polmult.df <- cbind(polmult.df, OBJ_FELS = c(rep("BD01", nrow(polmult.df)-1), "B
 selected.coord <- st_coordinates(polmult.df[which(polmult.df$Selected),]$geometry)[,"X"]
 buildleft <- min(selected.coord) + sample(seq(0.5,2,by=0.2),1)
 buildwidth <- 9.5 + sample(c(0, 0.5, 1), 1)
-buildlength <- 10 + sample(c(0, 0.5, 1, 1.5, 2, 2.5), 1)
+frontyard <- sample(2:14,1)
+buildlength <- frontyard + 10 + sample(c(0, 0.5, 1, 1.5, 2, 2.5), 1)
 ## Building polys
 ## First building
-b1 <- rbind(c(buildleft,0),
-            c(buildleft + buildwidth,0),
+b1 <- rbind(c(buildleft,frontyard),
+            c(buildleft + buildwidth, frontyard),
             c(buildleft + buildwidth, buildlength),
             c(buildleft, buildlength),
-            c(buildleft,0))
+            c(buildleft, frontyard))
 buildpol1 <- st_polygon(list(b1))
 ## Second building
 buildlow <- buildlength + sample(1:10,1)
