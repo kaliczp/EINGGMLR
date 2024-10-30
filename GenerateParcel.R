@@ -83,6 +83,6 @@ polmult.df <- cbind(polmult.df, IRANY = szovegszog)
 streetangle <- szovegszog + 270
 streetangle <- ifelse(streetangle > 360, streetangle - 360, streetangle)
 polmult.df[grep("BC", polmult.df[, "OBJ_FELS", drop = TRUE]), "IRANY"] <- streetangle
-aktfilename <- paste0(gsub(" ", "", students[studentnr,]), ".gml")
+aktfilename <- paste0("Telkek/",gsub(" ", "", students[studentnr,]), ".gml")
 BuildNew(polmult.df, file = aktfilename, hrsz = sample(21:380,1))
 }
