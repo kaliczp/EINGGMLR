@@ -220,9 +220,13 @@ BuildNew <- function(poly, file = NULL, hrsz = 110, adminarea = NULL) {
         addChildren(pointNode, newXMLNode("MAGASSAG", 0, namespace = "eing"))
         addChildren(pointNode, newXMLNode("PONTSZAM", pontszam, namespace = "eing"))
         if(actualpoints < 3) {
-            addChildren(pointNode, newXMLNode("PONTKOD", 4136, namespace = "eing"))
+            addChildren(pointNode, newXMLNode("PONTKOD", 4195, namespace = "eing"))
         } else {
-            addChildren(pointNode, newXMLNode("PONTKOD", 4236, namespace = "eing"))
+            if(actualpoints < 5) {
+                addChildren(pointNode, newXMLNode("PONTKOD", 4295, namespace = "eing"))
+            } else {
+                addChildren(pointNode, newXMLNode("PONTKOD", 4236, namespace = "eing"))
+            }
         }
         addChildren(pointNode, newXMLNode("JELKULCS", 0, namespace = "eing"))
         pointGeometry <- newXMLNode("geometry", parent=pointNode, namespace = "eing")
