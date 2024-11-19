@@ -20,28 +20,22 @@ BuildNew <- function(poly, file = NULL, hrsz = 110, adminarea = NULL) {
     allfid <- round(abs(rnorm(1))*10^14) +
         round(abs(rnorm(nrpoly, sd = 0.01)*10^4))
     currfid <- allfid[currpoly]
+    doc <- newXMLDoc()
     ## Meta data creation
-    newgml <- xmlTree("gml:FeatureCollection", namespaces = list(eing = "eing.foldhivatal.hu",
-                                                             gml = "http://www.opengis.net/gml",
-                                                             xlink = "http://www.w3.org/1999/xlink",
-                                                             xs="http://www.w3.org/2001/XMLSchema"))
-    newgml$setNamespace("gml")
-    newgml$addNode("metaDataProperty", close = FALSE)
-    newgml$addNode("GenericMetaData", close = FALSE)
-    newgml$setNamespace(NULL)
-    newgml$addNode("MetaDataList", close = FALSE)
-    newgml$addNode("gmlID", paste0(c("691da01c-7911-45a7-b831-",
-                                     sample(c(1:9, letters[1:6]), size = 12, replace = TRUE)),
-                                   collapse = ""))
-    newgml$addNode("gmlExportDate", round(as.numeric(Sys.time())*1000))
-    newgml$addNode("gmlGeobjIds", currfid)
-    newgml$addNode("xsdVersion", 2.3)
-    newgml$closeNode()
-    newgml$closeNode()
-    ## Create gml
-    gmlwithmeta <- xmlTreeParse(saveXML(newgml), useInternalNodes = T)
-    root <- xmlRoot(gmlwithmeta)
-    metadataNode <- newXMLNode("featureMembers", parent = root, namespace = "gml")
+    ns <- c(eing = "eing.foldhivatal.hu",
+            gml = "http://www.opengis.net/gml",
+            xlink = "http://www.w3.org/1999/xlink",
+            xs="http://www.w3.org/2001/XMLSchema")
+    newgml <- newXMLNode("FeatureCollection", namespaceDefinitions = ns,
+                              namespace = "gml", doc = doc)
+    ## Create two main children
+    metaprop <-  newXMLNode("metaDataProperty", parent = newgml, namespace = "gml")
+    genericmeta <-  newXMLNode("GenericMetaData", parent = metaprop, namespace = "gml")
+    metalist <-  newXMLNode("MetaDataList", parent = genericmeta)
+    newXMLNode("gmlID", "691da01c-7911-45a7-b831-bc594bfaca16", parent = metalist)
+    newXMLNode("gmlExportDate", round(as.numeric(Sys.time())*1000), parent = metalist)
+    newXMLNode("gmlGeobjIds", currfid, parent = metalist)
+    newXMLNode("xsdVersion", "2.3", parent = metalist)
 ### Data processing
     ## Selected poly last in the order because point generation
     orderedpoly <- c(1:(currpoly-1), (currpoly+1):nrpoly, currpoly)
@@ -57,6 +51,7 @@ BuildNew <- function(poly, file = NULL, hrsz = 110, adminarea = NULL) {
         adminareagen <- round(st_area(poly[actualpoly,]))
     }
     ## Create a parcel node
+    metadataNode <- newXMLNode("featureMembers", parent = newgml, namespace = "gml")
     parcelNode = newXMLNode("FOLDRESZLETEK", parent=metadataNode, namespace = "eing")
     addAttributes(parcelNode, "gml:id" = paste0("fid-", allfid[actualpoly]))
     parcelBounded <- newXMLNode("boundedBy", parent=parcelNode, namespace = "gml")
@@ -237,8 +232,8 @@ BuildNew <- function(poly, file = NULL, hrsz = 110, adminarea = NULL) {
     }
 ### Save gml
     if(is.null(file)) {
-        saveXML(gmlwithmeta, encoding = "UTF-8")
+        saveXML(doc, encoding = "UTF-8")
     } else {
-        saveXML(gmlwithmeta, file, prefix='<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n', encoding = "UTF-8")
+        saveXML(doc, file, prefix='<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n')
     }
 }
