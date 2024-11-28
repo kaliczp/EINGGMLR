@@ -13,9 +13,13 @@ p1 <- rbind(c(0,0), c(parcelwidth,0),
             c(parcelwidth,parcellength), c(0,parcellength), c(0,0))
 pol1 <- st_polygon(list(p1))
 if(megoszt) {
-    pol2 <- pol1 + rep(c(parcelwidth, 0), 5),
+    pol2 <- pol1 + c(parcelwidth, 0,
+                     2 * parcelwidth, 0,
+                     2 * parcelwidth, 0,
+                     parcelwidth, 0,
+                     parcelwidth, 0)
 } else {
-    pol2 <- pol1 + rep(c(parcelwidth, 0), 5),
+    pol2 <- pol1 + rep(c(parcelwidth, 0), 5)
 }
 polmult <- st_sfc(pol1,
                   pol2,
