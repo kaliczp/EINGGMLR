@@ -239,6 +239,6 @@ BuildNew <- function(poly, file = NULL, hrsz = 110, adminarea = NULL) {
     if(is.null(file)) {
         saveXML(doc, encoding = "UTF-8")
     } else {
-        saveXML(doc, file, prefix='<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n')
+         cat(saveXML(doc, prefix='<?xml version="1.0" encoding="UTF-8" standalone="no"?>'), file = file)
     }
 }
