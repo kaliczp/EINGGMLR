@@ -2,6 +2,8 @@ library(sf)
 
 students <- read.table("export.csv", sep = ";")
 
+megoszt <- FALSE
+
 for(studentnr in 1:nrow(students)){
 studpos <- studentnr + 10
 parcelwidth <- sample(seq(14,20,by=0.1),1)
@@ -10,9 +12,14 @@ parcellength <- sample(seq(75,90,by=0.1),1)
 p1 <- rbind(c(0,0), c(parcelwidth,0),
             c(parcelwidth,parcellength), c(0,parcellength), c(0,0))
 pol1 <- st_polygon(list(p1))
+if(megoszt) {
+    pol2 <- pol1 + rep(c(parcelwidth, 0), 5),
+} else {
+    pol2 <- pol1 + rep(c(parcelwidth, 0), 5),
+}
 polmult <- st_sfc(pol1,
-                  pol1 + rep(c(parcelwidth, 0), 5),
-                  pol1 +  2 * rep(c(parcelwidth, 0), 5) +
+                  pol2,
+                  pol2 +  2 * rep(c(parcelwidth, 0), 5) +
                   c(0,0,round(rnorm(1,sd = 0.1),2),0,round(rnorm(1, sd = 0.1),2),0,0,0,0,0))
 polmult.df <- st_sf(data.frame(Selected = c(F,T,F), geom=polmult))
 ## Street gen
