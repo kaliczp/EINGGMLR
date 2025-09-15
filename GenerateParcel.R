@@ -87,8 +87,6 @@ builpolmult <- st_sfc(buildpol1, buildpol2)
 polmult.df <- rbind(polmult.df, st_sf(data.frame(Selected = T, OBJ_FELS = c("CA01", "CA06")), geometry = builpolmult))
 ## Rotate polys
 polmult.df$geometry<-polmult.df$geometry*rot(studpos * pi/40) + c(864000, 100000)
-## Add CRS
-st_crs(polmult.df) <- 23700
 ## Text rotation angle
 szovegszog <- studpos*180/40 - 90
 szovegszog <- ifelse(szovegszog < 0, szovegszog + 360, szovegszog)
@@ -96,6 +94,9 @@ polmult.df <- cbind(polmult.df, IRANY = szovegszog)
 streetangle <- szovegszog + 270
 streetangle <- ifelse(streetangle > 360, streetangle - 360, streetangle)
 polmult.df[grep("BC", polmult.df[, "OBJ_FELS", drop = TRUE]), "IRANY"] <- streetangle
+}
+## Add CRS
+st_crs(polmult.df) <- 23700
 aktfilename <- paste0("Telkek/",gsub(" ", "", students[studentnr,]), ".gml")
 BuildNew(polmult.df, file = aktfilename, hrsz = sample(21:380,1))
 }
