@@ -4,6 +4,9 @@ students <- read.table("export.csv", sep = ";")
 
 megoszt <- FALSE
 
+## Rotate function
+rot <- function(a) matrix(c(cos(a), sin(a), -sin(a), cos(a)), 2, 2)
+
 for(studentnr in 1:nrow(students)){
 studpos <- studentnr + 10
 parcelwidth <- sample(seq(14,20,by=0.1),1)
@@ -83,7 +86,6 @@ buildpol2 <- st_polygon(list(b2))
 builpolmult <- st_sfc(buildpol1, buildpol2)
 polmult.df <- rbind(polmult.df, st_sf(data.frame(Selected = T, OBJ_FELS = c("CA01", "CA06")), geometry = builpolmult))
 ## Rotate polys
-rot <- function(a) matrix(c(cos(a), sin(a), -sin(a), cos(a)), 2, 2)
 polmult.df$geometry<-polmult.df$geometry*rot(studpos * pi/40) + c(864000, 100000)
 ## Add CRS
 st_crs(polmult.df) <- 23700
