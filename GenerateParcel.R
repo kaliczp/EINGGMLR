@@ -3,6 +3,7 @@ library(sf)
 students <- read.table("export.csv", sep = ";")
 
 megoszt <- FALSE
+onlyone <- FALSE
 
 ## Rotate function
 rot <- function(a) matrix(c(cos(a), sin(a), -sin(a), cos(a)), 2, 2)
@@ -24,6 +25,16 @@ if(megoszt) {
 } else {
     pol2 <- pol1 + rep(c(parcelwidth, 0), 5)
 }
+if(onlyone) {
+    polmult <- st_sfc(pol1)
+    polmult.df <- st_sf(data.frame(Selected = T, geom=polmult))
+    polmult.df$geometry<-polmult.df$geometry*rot(studpos * pi/40) + c(864000, 100000)
+    polmult.df <- cbind(polmult.df, OBJ_FELS = "BD01")
+    ## Text rotation angle
+    szovegszog <- studpos*180/40 - 90
+    szovegszog <- ifelse(szovegszog < 0, szovegszog + 360, szovegszog)
+    polmult.df <- cbind(polmult.df, IRANY = szovegszog)
+} else {
 polmult <- st_sfc(pol1,
                   pol2,
                   pol2 +  2 * rep(c(parcelwidth, 0), 5) +
