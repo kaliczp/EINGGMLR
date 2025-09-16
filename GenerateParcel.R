@@ -35,9 +35,14 @@ if(onlyone) {
     szovegszog <- ifelse(szovegszog < 0, szovegszog + 360, szovegszog)
     polmult.df <- cbind(polmult.df, IRANY = szovegszog)
 } else {
+    if(megoszt){
+        pol3 <- pol2 +  2 * rep(c(parcelwidth, 0), 5)
+    } else {
+        pol3 <- pol2 +  rep(c(parcelwidth, 0), 5)
+    }
 polmult <- st_sfc(pol1,
                   pol2,
-                  pol2 +  2 * rep(c(parcelwidth, 0), 5) +
+                      pol3 +
                   c(0,0,round(rnorm(1,sd = 0.1),2),0,round(rnorm(1, sd = 0.1),2),0,0,0,0,0))
 polmult.df <- st_sf(data.frame(Selected = c(F,T,F), geom=polmult))
 ## Street gen
