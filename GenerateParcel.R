@@ -1,6 +1,6 @@
 library(sf)
 
-students <- read.table("export.csv", sep = ";")
+students <- read.table("export.csv", sep = ";", head = TRUE)
 
 megoszt <- FALSE
 onlyone <- FALSE
