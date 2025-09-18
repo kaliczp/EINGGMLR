@@ -28,7 +28,7 @@ BuildNew <- function(poly, file = NULL, hrsz = 110, adminarea = NULL) {
             xs="http://www.w3.org/2001/XMLSchema")
     newgml <- newXMLNode("FeatureCollection", namespaceDefinitions = ns,
                               namespace = "gml", doc = doc)
-    ## Create two main children
+    ## Create MetaData chidren
     metaprop <-  newXMLNode("metaDataProperty", parent = newgml, namespace = "gml")
     genericmeta <-  newXMLNode("GenericMetaData", parent = metaprop, namespace = "gml")
     metalist <-  newXMLNode("MetaDataList", parent = genericmeta)
