@@ -37,8 +37,13 @@ BuildNew <- function(poly, file = NULL, hrsz = 110, adminarea = NULL) {
     newXMLNode("gmlGeobjIds", currfid, parent = metalist)
     newXMLNode("xsdVersion", "2.3", parent = metalist)
 ### Data processing
+    ## Only two cases OK; 1 or more than 3
+    if(nrpoly > 2) {
     ## Selected poly last in the order because point generation
     orderedpoly <- c(1:(currpoly-1), (currpoly+1):nrpoly, currpoly)
+    } else {
+        orderedpoly <- currpoly
+    }
     for(actualpoly in orderedpoly) {
     ## Coordinates prepcocessing
     coords.matrix <- round(st_coordinates(poly[actualpoly,])[, c("X","Y")], 2)
