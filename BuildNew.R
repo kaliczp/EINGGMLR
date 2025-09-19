@@ -163,8 +163,12 @@ BuildNew <- function(poly, file = NULL, hrsz = 110, adminarea = NULL) {
 ### Points
     ## Random point geneeration related to original
     currfidother <- currfid + round(abs(rnorm(1))*10^4)
-    ## Address coordinate
-    addresscoordpoint <- round(st_coordinates(st_centroid(poly[currpoly,])))
+    ## Address coordinate if residential area non-public
+    if(DATcode[currpoly] == "BD01") {
+        suppressWarnings( # Prevent known warning about attributes
+            currcentroid <- st_centroid(poly[currpoly,])
+        )
+        addresscoordpoint <- round(st_coordinates(currcentroid))
     pointNode <- newXMLNode("CIMKOORDINATA", parent=metadataNode, namespace = "eing")
     addAttributes(pointNode, "gml:id" = paste0("fid-", currfidother))
     pointBounded <- newXMLNode("boundedBy", parent=pointNode, namespace = "gml")
@@ -189,6 +193,7 @@ BuildNew <- function(poly, file = NULL, hrsz = 110, adminarea = NULL) {
     pointPoint <- newXMLNode("Point", parent=pointGeometry, namespace = "gml")
     addAttributes(pointPoint, srsDimension = 2, srsName = srsName)
     addChildren(pointPoint, newXMLNode("pos", paste(addresscoordpoint, collapse = " "), namespace = "gml"))
+    }
 ### Points generation
     ## Initial point id
     pontszam <- 52421
