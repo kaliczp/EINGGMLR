@@ -2,6 +2,7 @@ library(sf)
 
 students <- read.table("export.csv", sep = ";", head = TRUE)
 
+building <- FALSE
 megoszt <- FALSE # Double size parcel
 onlyone <- TRUE # No neighbours
 
@@ -74,6 +75,7 @@ polmultnostreet.df <- rbind(polmult.df, nostreetPol.df)
 polmult.df <- rbind(polmultnostreet.df, st_sf(data.frame(Selected = F, geom = streetPol)))
 polmult.df <- cbind(polmult.df, OBJ_FELS = c(rep("BD01", nrow(polmult.df)-1), "BC01"))
 ### Buildings generation
+    if(building){
 ## Selected parcel width
 selected.coord <- st_coordinates(polmult.df[which(polmult.df$Selected),]$geometry)[,"X"]
 buildleft <- min(selected.coord) + sample(seq(0.5,2,by=0.2),1)
@@ -101,6 +103,7 @@ buildpol2 <- st_polygon(list(b2))
 ## Put into one geometry
 builpolmult <- st_sfc(buildpol1, buildpol2)
 polmult.df <- rbind(polmult.df, st_sf(data.frame(Selected = T, OBJ_FELS = c("CA01", "CA06")), geometry = builpolmult))
+        }
 ## Rotate polys
 polmult.df$geometry<-polmult.df$geometry*rot(studpos * pi/40) + c(864000, 100000)
 ## Text rotation angle
