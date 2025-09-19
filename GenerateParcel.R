@@ -46,6 +46,12 @@ polmult <- st_sfc(pol1,
                       pol3 +
                   c(0,0,round(rnorm(1,sd = 0.1),2),0,round(rnorm(1, sd = 0.1),2),0,0,0,0,0))
 polmult.df <- st_sf(data.frame(Selected = c(F,T,F), geom=polmult))
+## Parcel ID
+hrsz <- sample(60:580,1)
+hrsz[2:3] <- hrsz[1] + 1:2
+if(megoszt)
+    hrsz[1] <- paste0(hrsz[1], "/2")
+polmult.df[, "HRSZ"] <- hrsz
 ## Street gen
 streetcoords <- st_coordinates(polmult)
 streetcoords <- unique(streetcoords[streetcoords[,"Y"] < 1,c("X", "Y")])
@@ -69,10 +75,15 @@ streetcoordsOtherSide[,"Y"] <- sample(seq(-25,-15,by=0.1),1)
 streetcoordsOK <- rbind(streetcoords, streetcoordsOtherSide, streetcoords[1,])
 streetPol <- st_sfc(st_polygon(list(streetcoordsOK)))
 ## Neighboring parcels second row
-nostreetPol.df <- st_sf(data.frame(Selected = F, geom = polmult + c(0, parcellength)))
+neighhrsz <- as.numeric(hrsz[2]) + sample(streetLeftRight[2]:(streetLeftRight[2]+100),1)
+neighhrsz[2:3] <- neighhrsz[1] + 1:2
+if(megoszt)
+    neighhrsz[1] <- paste0(neighhrsz[1], "/2")
+nostreetPol.df <- st_sf(data.frame(Selected = F, HRSZ = neighhrsz, geom = polmult + c(0, parcellength)))
 polmultnostreet.df <- rbind(polmult.df, nostreetPol.df)
 ## Add street
-polmult.df <- rbind(polmultnostreet.df, st_sf(data.frame(Selected = F, geom = streetPol)))
+strhrsz <- as.numeric(hrsz[2]) - streetLeftRight[1] - 1
+polmult.df <- rbind(polmultnostreet.df, st_sf(data.frame(Selected = F, HRSZ = strhrsz, geom = streetPol)))
 polmult.df <- cbind(polmult.df, OBJ_FELS = c(rep("BD01", nrow(polmult.df)-1), "BC01"))
 ### Buildings generation
     if(building){
@@ -102,7 +113,7 @@ b2 <- rbind(c(buildleft, buildlow),
 buildpol2 <- st_polygon(list(b2))
 ## Put into one geometry
 builpolmult <- st_sfc(buildpol1, buildpol2)
-polmult.df <- rbind(polmult.df, st_sf(data.frame(Selected = T, OBJ_FELS = c("CA01", "CA06")), geometry = builpolmult))
+polmult.df <- rbind(polmult.df, st_sf(data.frame(Selected = T, HRSZ=NA, OBJ_FELS = c("CA01", "CA06")), geometry = builpolmult))
         }
 ## Rotate polys
 polmult.df$geometry<-polmult.df$geometry*rot(studpos * pi/40) + c(864000, 100000)
