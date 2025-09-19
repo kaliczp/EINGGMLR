@@ -35,6 +35,8 @@ if(onlyone) {
     szovegszog <- studpos*180/40 - 90
     szovegszog <- ifelse(szovegszog < 0, szovegszog + 360, szovegszog)
     polmult.df <- cbind(polmult.df, IRANY = szovegszog)
+    hrsz <- sample(60:580,1)
+    polmult.df[, "HRSZ"] <- hrsz
 } else {
     if(megoszt){
         pol3 <- pol2 +  2 * rep(c(parcelwidth, 0), 5)
