@@ -30,13 +30,13 @@ if(onlyone) {
     polmult <- st_sfc(pol1)
     polmult.df <- st_sf(data.frame(Selected = T, geom=polmult))
     polmult.df$geometry<-polmult.df$geometry*rot(studpos * pi/40) + c(864000, 100000)
+    hrsz <- sample(60:580,1)
+    polmult.df[, "HRSZ"] <- hrsz
     polmult.df <- cbind(polmult.df, OBJ_FELS = "BC01")
     ## Text rotation angle
     szovegszog <- studpos*180/40 - 90
     szovegszog <- ifelse(szovegszog < 0, szovegszog + 360, szovegszog)
     polmult.df <- cbind(polmult.df, IRANY = szovegszog)
-    hrsz <- sample(60:580,1)
-    polmult.df[, "HRSZ"] <- hrsz
 } else {
     if(megoszt){
         pol3 <- pol2 +  2 * rep(c(parcelwidth, 0), 5)
