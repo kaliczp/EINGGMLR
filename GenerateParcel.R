@@ -89,8 +89,11 @@ polmult.df <- rbind(polmultnostreet.df, st_sf(data.frame(Selected = F, HRSZ = st
 polmult.df <- cbind(polmult.df, OBJ_FELS = c(rep("BD01", nrow(polmult.df)-1), "BC01"))
 ### Buildings generation
     if(building){
-## Selected parcel width
-selected.coord <- st_coordinates(polmult.df[which(polmult.df$Selected),]$geometry)[,"X"]
+        ## Parcels with building
+        parcelsWithBuildings <- which(polmult.df$Selected)
+        actualParcel <- parcelsWithBuildings[1]
+        ## Selected parcel width
+        selected.coord <- st_coordinates(polmult.df[actualParcel,]$geometry)[,"X"]
 buildleft <- min(selected.coord) + sample(seq(0.5,2,by=0.2),1)
 buildwidth <- 9.5 + sample(c(0, 0.5, 1), 1)
 frontyard <- sample(2:14,1)
@@ -115,8 +118,12 @@ b2 <- rbind(c(buildleft, buildlow),
 buildpol2 <- st_polygon(list(b2))
 ## Put into one geometry
 builpolmult <- st_sfc(buildpol1, buildpol2)
-polmult.df <- rbind(polmult.df, st_sf(data.frame(Selected = T, HRSZ=NA, OBJ_FELS = c("CA01", "CA06")), geometry = builpolmult))
-        }
+        polmult.df <- rbind(polmult.df,
+                            st_sf(data.frame(Selected = T,
+                                             HRSZ=polmult.df[actualParcel,]$HRSZ,
+                                             OBJ_FELS = c("CA01", "CA06")), geometry = builpolmult)
+                            )
+    }
 ## Rotate polys
 polmult.df$geometry<-polmult.df$geometry*rot(studpos * pi/40) + c(864000, 100000)
 ## Text rotation angle
