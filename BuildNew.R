@@ -71,7 +71,7 @@ BuildNew <- function(poly, file = NULL, hrsz = 110, adminarea = NULL) {
     addChildren(parcelNode, newXMLNode("RETEG_NEV", "Földrészletek" , namespace = "eing"))
     addChildren(parcelNode, newXMLNode("TELEPULES_ID", 3400, namespace = "eing"))
     addChildren(parcelNode, newXMLNode("FEKVES", 3719, namespace = "eing")) # Belter
-        if(actDATcode == "BC01") {
+        if(actDATcode %in% c("BC01", "BC02")) {
             streethrsz <- hrsz - sample(10:20,1)
             addChildren(parcelNode, newXMLNode("HRSZ", streethrsz, namespace = "eing"))
 
