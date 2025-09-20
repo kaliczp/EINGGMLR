@@ -43,17 +43,17 @@ if(onlyone) {
     } else {
         pol3 <- pol2 +  rep(c(parcelwidth, 0), 5)
     }
-polmult <- st_sfc(pol1,
-                  pol2,
+    polmult <- st_sfc(pol1,
+                      pol2,
                       pol3 +
                   c(0,0,round(rnorm(1,sd = 0.1),2),0,round(rnorm(1, sd = 0.1),2),0,0,0,0,0))
-polmult.df <- st_sf(data.frame(Selected = c(F,T,F), geom=polmult))
-## Parcel ID
-hrsz <- sample(60:580,1)
-hrsz[2:3] <- hrsz[1] + 1:2
-if(megoszt)
-    hrsz[1] <- paste0(hrsz[1], "/2")
-polmult.df[, "HRSZ"] <- hrsz
+    polmult.df <- st_sf(data.frame(Selected = c(F,T,F), geom=polmult))
+    ## Parcel ID
+    hrsz <- sample(60:580,1)
+    hrsz[2:3] <- hrsz[1] + 1:2
+    if(megoszt)
+        hrsz[1] <- paste0(hrsz[1], "/2")
+    polmult.df[, "HRSZ"] <- hrsz
 ## Street gen
 streetcoords <- st_coordinates(polmult)
 streetcoords <- unique(streetcoords[streetcoords[,"Y"] < 1,c("X", "Y")])
