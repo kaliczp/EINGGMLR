@@ -27,12 +27,21 @@ if(megoszt) {
     pol2 <- pol1 + rep(c(parcelwidth, 0), 5)
 }
 if(onlyone) {
+    koztFeliratSzoveg <- paste(strsplit(students[studentnr,], split = " ")[[1]][2], "tér")
+    koztFeliratHely <- st_centroid(pol1)
+    koztFeliratHely <- koztFeliratHely + koztFeliratHely/5*c(1,0)
     polmult <- st_sfc(pol1)
     polmult.df <- st_sf(data.frame(Selected = T, geom=polmult))
+    polmult.df <- rbind(polmult.df,
+                        st_sf(data.frame(Selected = T, geom=st_sfc(koztFeliratHely)))
+                        )
     polmult.df$geometry<-polmult.df$geometry*rot(studpos * pi/40) + c(864000, 100000)
     hrsz <- sample(60:580,1)
     polmult.df[, "HRSZ"] <- hrsz
-    polmult.df <- cbind(polmult.df, OBJ_FELS = "BC01")
+    polmult.df <- cbind(polmult.df,
+                        OBJ_FELS = c("BC01", "TX43"),
+                        FELIRAT = c("", koztFeliratSzoveg)
+                        )
     ## Text rotation angle
     szovegszog <- studpos*180/40 - 90
     szovegszog <- ifelse(szovegszog < 0, szovegszog + 360, szovegszog)
