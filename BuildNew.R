@@ -37,6 +37,8 @@ BuildNew <- function(poly, file = NULL, hrsz = 110, adminarea = NULL) {
     newXMLNode("gmlGeobjIds", currfid, parent = metalist)
     newXMLNode("xsdVersion", "2.3", parent = metalist)
 ### Data processing
+    ## First create featrue Members node
+    metadataNode <- newXMLNode("featureMembers", parent = newgml, namespace = "gml")
     ## Only two cases OK; 1 or more than 3
     if(nrpoly > 2) {
         ## Selected poly last in the order because point generation
@@ -57,7 +59,6 @@ BuildNew <- function(poly, file = NULL, hrsz = 110, adminarea = NULL) {
         }
 ### Create features
         ## Create a parcel node
-        metadataNode <- newXMLNode("featureMembers", parent = newgml, namespace = "gml")
         parcelNode = newXMLNode("FOLDRESZLETEK", parent=metadataNode, namespace = "eing")
         addAttributes(parcelNode, "gml:id" = paste0("fid-", allfid[actualpoly]))
         parcelBounded <- newXMLNode("boundedBy", parent=parcelNode, namespace = "gml")
