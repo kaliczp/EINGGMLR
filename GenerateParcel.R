@@ -134,7 +134,11 @@ builpolmult <- st_sfc(buildpol1, buildpol2)
                             )
     }
 ## Rotate polys
-polmult.df$geometry<-polmult.df$geometry*rot(studpos * pi/40) + c(864000, 100000)
+    ## In case of measure line
+    if(MeasureLine) {
+        st_cast(polmult.df, "MULTIPOINT")
+    }
+    polmult.df$geometry<-polmult.df$geometry*rot(studpos * pi/40) + c(864000, 100000)
 ## Text rotation angle
 szovegszog <- studpos*180/40 - 90
 szovegszog <- ifelse(szovegszog < 0, szovegszog + 360, szovegszog)
