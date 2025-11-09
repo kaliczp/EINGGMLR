@@ -154,5 +154,5 @@ polmult.df[grep("BC", polmult.df[, "OBJ_FELS", drop = TRUE]), "IRANY"] <- street
 ## Add CRS
 st_crs(polmult.df) <- 23700
 aktfilename <- paste0("Telkek/",gsub(" ", "", students[studentnr,]), ".gml")
-BuildNew(polmult.df, file = aktfilename, hrsz = sample(21:380,1))
+BuildNew(polmult.df, file = aktfilename)
 }

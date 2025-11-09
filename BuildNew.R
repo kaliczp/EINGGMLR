@@ -1,4 +1,4 @@
-BuildNew <- function(poly, file = NULL, hrsz = 110, adminarea = NULL) {
+BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
     require(XML)
     require(sf)
     ## To prevent scientific notation
@@ -80,16 +80,15 @@ BuildNew <- function(poly, file = NULL, hrsz = 110, adminarea = NULL) {
         addChildren(parcelNode, newXMLNode("TELEPULES_ID", 3400, namespace = "eing"))
         addChildren(parcelNode, newXMLNode("FEKVES", 3719, namespace = "eing")) # Belter
         if(actDATcode %in% c("BC01", "BC02")) {
-            streethrsz <- hrsz - sample(10:20,1)
+            streethrsz <- st_drop_geometry(poly[actualpoly, "HRSZ", drop = TRUE])
             addChildren(parcelNode, newXMLNode("HRSZ", streethrsz, namespace = "eing"))
-
             addChildren(parcelNode, newXMLNode("FELIRAT", paste0(
                                                               "(",
                                                               streethrsz,
                                                               ")"),
                                                namespace = "eing"))
         } else {
-            parcelhrsz <- hrsz + actualpoly
+            parcelhrsz <- st_drop_geometry(poly[actualpoly, "HRSZ", drop = TRUE])
             addChildren(parcelNode, newXMLNode("HRSZ", parcelhrsz, namespace = "eing"))
             addChildren(parcelNode, newXMLNode("FELIRAT", parcelhrsz, namespace = "eing"))
         }
@@ -145,8 +144,8 @@ BuildNew <- function(poly, file = NULL, hrsz = 110, adminarea = NULL) {
             addChildren(parcelNode, newXMLNode("RETEG_NEV", "Épület" , namespace = "eing"))
             addChildren(parcelNode, newXMLNode("TELEPULES_ID", 3400, namespace = "eing"))
             addChildren(parcelNode, newXMLNode("FEKVES", 3719, namespace = "eing")) # Belter
-            buildhrsz <- hrsz + actualpoly
-            addChildren(parcelNode, newXMLNode("HRSZ", parcelhrsz, namespace = "eing"))
+            buildhrsz <- st_drop_geometry(epuletpoly[actbuildingpoly, "HRSZ", drop = TRUE])
+            addChildren(parcelNode, newXMLNode("HRSZ", buildhrsz, namespace = "eing"))
             addChildren(parcelNode, newXMLNode("FELIRAT", paste(actbuildingpoly,"ép."),
                                                namespace = "eing"))
             addChildren(parcelNode, newXMLNode("SZINT", 0, namespace = "eing"))
@@ -189,7 +188,7 @@ BuildNew <- function(poly, file = NULL, hrsz = 110, adminarea = NULL) {
         addChildren(pointNode, newXMLNode("RETEG_ID", 52, namespace = "eing"))
         addChildren(pointNode, newXMLNode("RETEG_NEV", "Címkoordináták" , namespace = "eing"))
         addChildren(pointNode, newXMLNode("TELEPULES_ID", 3400, namespace = "eing"))
-        addChildren(pointNode, newXMLNode("HRSZ", hrsz + currpoly, namespace = "eing"))
+        addChildren(pointNode, newXMLNode("HRSZ", parcelhrsz, namespace = "eing"))
         addChildren(pointNode, newXMLNode("FELIRAT", 1, namespace = "eing"))
         addChildren(pointNode, newXMLNode("SZINT", 0, namespace = "eing"))
         addChildren(pointNode, newXMLNode("IRANY", textangle, namespace = "eing"))
@@ -266,14 +265,19 @@ BuildNew <- function(poly, file = NULL, hrsz = 110, adminarea = NULL) {
         addChildren(textNode, newXMLNode("RETEG_ID", 2, namespace = "eing"))
         addChildren(textNode, newXMLNode("RETEG_NEV", "Feliratok" , namespace = "eing"))
         addChildren(textNode, newXMLNode("TELEPULES_ID", 3400, namespace = "eing"))
-        if(actualtext$HRSZ != "") {
-            addChildren(textNode, newXMLNode("HRSZ", actualtext$HRSZ, namespace = "eing"))
+        actualHRSZ <- st_drop_geometry(actualtext[,"HRSZ", drop = TRUE])
+        if(actualHRSZ != "") {
+            addChildren(textNode, newXMLNode("HRSZ", actualHRSZ, namespace = "eing"))
         } else {
             addChildren(textNode, newXMLNode("HRSZ", namespace = "eing"))
         }
-        addChildren(textNode, newXMLNode("FELIRAT", actualtext$FELIRAT, namespace = "eing"))
+        addChildren(textNode, newXMLNode("FELIRAT",
+                                         st_drop_geometry(actualtext[, "FELIRAT", drop = TRUE]),
+                                         namespace = "eing"))
         addChildren(textNode, newXMLNode("SZINT", 0, namespace = "eing"))
-        addChildren(textNode, newXMLNode("IRANY", actualtext$IRANY, namespace = "eing"))
+        addChildren(textNode, newXMLNode("IRANY",
+                                         st_drop_geometry(actualtext[, "IRANY", drop = TRUE]),
+                                         namespace = "eing"))
         addChildren(textNode, newXMLNode("FRSZ_ID", currfid, namespace = "eing"))
         pointGeometry <- newXMLNode("geometry", parent=textNode, namespace = "eing")
         pointPoint <- newXMLNode("Point", parent=pointGeometry, namespace = "gml")
