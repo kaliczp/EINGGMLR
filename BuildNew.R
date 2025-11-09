@@ -248,6 +248,38 @@ BuildNew <- function(poly, file = NULL, hrsz = 110, adminarea = NULL) {
         addChildren(pointPoint, newXMLNode("pos", paste(actualpoint, collapse = " "), namespace = "gml"))
         pontszam <- pontszam + sample(1:5, 1)
     }
+### Text preocessing
+    if(any(DATclass == "T")) {
+        warning("Text exist!")
+        currfidother <- currfid + sample(100:110, 1)
+        actualtext <- texts[1,]
+        textpoint <- round(st_coordinates(actualtext),2)
+        textNode <- newXMLNode("FELIRATOK", parent=metadataNode, namespace = "eing")
+        addAttributes(pointNode, "gml:id" = paste0("fid-", currfidother))
+        pointBounded <- newXMLNode("boundedBy", parent=textNode, namespace = "gml")
+        pointEnvelope <- newXMLNode("Envelope", parent=pointBounded, namespace = "gml")
+        addAttributes(pointEnvelope, srsDimension = 2, srsName = srsName)
+        addChildren(pointEnvelope, newXMLNode("lowerCorner", paste(textpoint, collapse = " "), namespace = "gml"))
+        addChildren(pointEnvelope, newXMLNode("upperCorner", paste(textpoint, collapse = " "), namespace = "gml"))
+        addChildren(textNode, newXMLNode("GEOBJ_ID", currfidother, namespace = "eing"))
+        addChildren(textNode, newXMLNode("OBJ_FELS", actualtext$OBJ_FELS, namespace = "eing"))
+        addChildren(textNode, newXMLNode("RETEG_ID", 2, namespace = "eing"))
+        addChildren(textNode, newXMLNode("RETEG_NEV", "Feliratok" , namespace = "eing"))
+        addChildren(textNode, newXMLNode("TELEPULES_ID", 3400, namespace = "eing"))
+        if(actualtext$HRSZ != "") {
+            addChildren(textNode, newXMLNode("HRSZ", actualtext$HRSZ, namespace = "eing"))
+        } else {
+            addChildren(textNode, newXMLNode("HRSZ", namespace = "eing"))
+        }
+        addChildren(textNode, newXMLNode("FELIRAT", actualtext$FELIRAT, namespace = "eing"))
+        addChildren(textNode, newXMLNode("SZINT", 0, namespace = "eing"))
+        addChildren(textNode, newXMLNode("IRANY", textangle, namespace = "eing"))
+        addChildren(textNode, newXMLNode("FRSZ_ID", currfid, namespace = "eing"))
+        pointGeometry <- newXMLNode("geometry", parent=textNode, namespace = "eing")
+        pointPoint <- newXMLNode("Point", parent=pointGeometry, namespace = "gml")
+        addAttributes(pointPoint, srsDimension = 2, srsName = srsName)
+        addChildren(pointPoint, newXMLNode("pos", paste(textpoint, collapse = " "), namespace = "gml"))
+    }
 ### Save gml
     if(is.null(file)) {
         saveXML(doc, encoding = "UTF-8")
