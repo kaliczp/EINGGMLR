@@ -255,7 +255,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
         actualtext <- texts[1,]
         textpoint <- round(st_coordinates(actualtext),2)
         textNode <- newXMLNode("FELIRATOK", parent=metadataNode, namespace = "eing")
-        addAttributes(pointNode, "gml:id" = paste0("fid-", currfidother))
+        addAttributes(textNode, "gml:id" = paste0("fid-", currfidother))
         pointBounded <- newXMLNode("boundedBy", parent=textNode, namespace = "gml")
         pointEnvelope <- newXMLNode("Envelope", parent=pointBounded, namespace = "gml")
         addAttributes(pointEnvelope, srsDimension = 2, srsName = srsName)
