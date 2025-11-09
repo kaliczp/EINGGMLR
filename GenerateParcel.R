@@ -136,20 +136,30 @@ builpolmult <- st_sfc(buildpol1, buildpol2)
                                              HRSZ=polmult.df[actualParcel,]$HRSZ,
                                              OBJ_FELS = c("CA01", "CA06")), geometry = builpolmult)
                             )
-    }
-## Rotate polys
+    } # End building
+    ## Kozter name
+    koztFeliratSzoveg <- paste(kozterName, "utca")
+    koztFeliratHely <- st_point(st_coordinates(st_centroid(streetPol)))
+    koztFeliratHely <- koztFeliratHely - (koztFeliratHely/4*c(0,1))
+    kozterLine <- grep("BC", polmult.df[, "OBJ_FELS", drop = TRUE])
+    polmult.df <- rbind(polmult.df, polmult.df[kozterLine, ])
+    kozterFeliratRow <- nrow(polmult.df)
+    st_geometry(polmult.df)[kozterFeliratRow] <- koztFeliratHely
+    polmult.df[kozterFeliratRow, "FELIRAT"] <- koztFeliratSzoveg
+    polmult.df[kozterFeliratRow, "OBJ_FELS"] <- "TX43"
+### Rotate polys
     ## In case of measure line
     if(MeasureLine) {
         st_cast(polmult.df, "MULTIPOINT")
     }
     polmult.df$geometry<-polmult.df$geometry*rot(studpos * pi/40) + c(864000, 100000)
-## Text rotation angle
+### Text rotation angle
 szovegszog <- studpos*180/40 - 90
 szovegszog <- ifelse(szovegszog < 0, szovegszog + 360, szovegszog)
 polmult.df <- cbind(polmult.df, IRANY = szovegszog)
 streetangle <- szovegszog + 270
 streetangle <- ifelse(streetangle > 360, streetangle - 360, streetangle)
-polmult.df[grep("BC", polmult.df[, "OBJ_FELS", drop = TRUE]), "IRANY"] <- streetangle
+    polmult.df[kozterLine, "IRANY"] <- streetangle
 }
 ## Add CRS
 st_crs(polmult.df) <- 23700
