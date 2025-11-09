@@ -29,7 +29,7 @@ if(megoszt) {
 if(onlyone) {
     koztFeliratSzoveg <- paste(strsplit(students[studentnr,], split = " ")[[1]][2], "tér")
     koztFeliratHely <- st_centroid(pol1)
-    koztFeliratHely <- koztFeliratHely + koztFeliratHely/5*c(1,0)
+    koztFeliratHely <- koztFeliratHely + koztFeliratHely/4*c(1,0)
     polmult <- st_sfc(pol1)
     polmult.df <- st_sf(data.frame(Selected = T, geom=polmult))
     polmult.df <- rbind(polmult.df,
@@ -46,6 +46,8 @@ if(onlyone) {
     szovegszog <- studpos*180/40 - 90
     szovegszog <- ifelse(szovegszog < 0, szovegszog + 360, szovegszog)
     polmult.df <- cbind(polmult.df, IRANY = szovegszog)
+    feliratszog <- polmult.df[2, "IRANY", drop = TRUE]
+    polmult.df[2, "IRANY"] <- ifelse(feliratszog > 270, feliratszog - 270, feliratszog + 90)
 } else {
     if(megoszt){
         pol3 <- pol2 +  2 * rep(c(parcelwidth, 0), 5)
