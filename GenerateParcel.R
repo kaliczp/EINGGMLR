@@ -27,8 +27,9 @@ if(megoszt) {
 } else {
     pol2 <- pol1 + rep(c(parcelwidth, 0), 5)
 }
+kozterName <- strsplit(students[studentnr,], split = " ")[[1]][2]
 if(onlyone) {
-    koztFeliratSzoveg <- paste(strsplit(students[studentnr,], split = " ")[[1]][2], "tér")
+    koztFeliratSzoveg <- paste(kozterName, "tér")
     koztFeliratHely <- st_centroid(pol1)
     koztFeliratHely <- koztFeliratHely + koztFeliratHely/4*c(1,0)
     polmult <- st_sfc(pol1)
