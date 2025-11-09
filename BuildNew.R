@@ -4,17 +4,18 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
     ## To prevent scientific notation
     options(scipen=999)
     ## Get DAT code and class
-    DATcode <- as.vector(poly[, "OBJ_FELS", drop = TRUE])
+    DATcode <- as.vector(fulldf[, "OBJ_FELS", drop = TRUE])
     DATclass <- substr(DATcode, start = 1, stop = 1 )
     ## Building?
     if(any(DATclass == "C")) {
-        epuletpoly <- poly[DATclass == "C",]
-        poly <- poly[!DATclass == "C",]
+        epuletpoly <- fulldf[DATclass == "C",]
+        poly <- fulldf[!DATclass == "C",]
+        modDATclass <- DATclass[!DATclass == "C"]
     }
     ## Text?
     if(any(DATclass == "T")) {
-        texts <- poly[DATclass == "T",]
-        poly <- poly[!DATclass == "T",]
+        texts <- fulldf[DATclass == "T",]
+        poly <- poly[!modDATclass == "T",]
     }
     ## Selected poly
     currpoly <- which(poly$Selected)
