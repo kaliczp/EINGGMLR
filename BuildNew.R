@@ -273,7 +273,7 @@ BuildNew <- function(poly, file = NULL, hrsz = 110, adminarea = NULL) {
         }
         addChildren(textNode, newXMLNode("FELIRAT", actualtext$FELIRAT, namespace = "eing"))
         addChildren(textNode, newXMLNode("SZINT", 0, namespace = "eing"))
-        addChildren(textNode, newXMLNode("IRANY", textangle, namespace = "eing"))
+        addChildren(textNode, newXMLNode("IRANY", actualtext$IRANY, namespace = "eing"))
         addChildren(textNode, newXMLNode("FRSZ_ID", currfid, namespace = "eing"))
         pointGeometry <- newXMLNode("geometry", parent=textNode, namespace = "eing")
         pointPoint <- newXMLNode("Point", parent=pointGeometry, namespace = "gml")
