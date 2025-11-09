@@ -5,6 +5,7 @@ students <- read.table("export.csv", sep = ";", head = TRUE)
 building <- FALSE
 megoszt <- FALSE # Double size parcel
 onlyone <- TRUE # No neighbours
+MeasureLine <- FALSE
 
 ## Rotate function
 rot <- function(a) matrix(c(cos(a), sin(a), -sin(a), cos(a)), 2, 2)
