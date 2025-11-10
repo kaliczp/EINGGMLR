@@ -11,7 +11,8 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
         epuletpoly <- fulldf[DATclass == "C",]
         poly <- fulldf[!DATclass == "C",]
         modDATclass <- DATclass[!DATclass == "C"]
-    }
+    } else {
+        modDATclass <- DATclass
     ## Text?
     if(any(DATclass == "T")) {
         texts <- fulldf[DATclass == "T",]
