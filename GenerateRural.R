@@ -7,7 +7,7 @@ studentnr <- 20
 
 {
     parcelwidth <- sample(seq(140,200,by=0.1),1)
-    parcellength <- sample(seq(750,900,by=0.1),1)
+    parcellength <- sample(seq(350,800,by=0.1),1)
     ## First row of parcels
     p1 <- rbind(c(0,0), c(parcelwidth,0),
                 c(parcelwidth,parcellength), c(0,parcellength), c(0,0))
