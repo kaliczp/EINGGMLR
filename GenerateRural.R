@@ -69,7 +69,7 @@ studentnr <- 20
     ## Add street
     strhrsz <- as.numeric(hrsz[2]) - streetLeftRight[1] - 1
     polmult.df <- rbind(polmultnostreet.df, st_sf(data.frame(Selected = F, HRSZ = strhrsz, geom = streetPol)))
-    polmult.df <- cbind(polmult.df, OBJ_FELS = c(rep("BD01", nrow(polmult.df)-1), "BC01"))
+    polmult.df <- cbind(polmult.df, OBJ_FELS = c(rep("BD02", nrow(polmult.df)-1), "BC02"))
     ### Rotate polys
     ## In case of measure line
     if(MeasureLine) {
