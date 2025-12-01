@@ -25,7 +25,7 @@ source("Common.R")
     } else {
         pol2 <- pol1 + rep(c(parcelwidth, 0), 5)
     }
-        if(megoszt){
+    if(megoszt){
         pol3 <- pol2 +  2 * rep(c(parcelwidth, 0), 5)
     } else {
         pol3 <- pol2 +  rep(c(parcelwidth, 0), 5)
@@ -74,7 +74,9 @@ source("Common.R")
     strhrsz <- as.numeric(hrsz[2]) - streetLeftRight[1] - 1
     polmult.df <- rbind(polmultnostreet.df, st_sf(data.frame(Selected = F, HRSZ = strhrsz, geom = streetPol)))
     polmult.df <- cbind(polmult.df, OBJ_FELS = c(rep("BD02", nrow(polmult.df)-1), "BC02"))
-    ### Rotate polys
+    kozterLine <- grep("BC", polmult.df[, "OBJ_FELS", drop = TRUE])
+    polmult.df <- rbind(polmult.df, polmult.df[kozterLine, ])
+### Rotate polys
     ## In case of measure line
     if(MeasureLine) {
         st_cast(polmult.df, "MULTIPOINT")
