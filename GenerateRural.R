@@ -4,8 +4,12 @@ students <- read.table("export.csv", sep = ";", head = TRUE)
 
 studentnr <- 20
 
+megoszt <- TRUE # Double size parcel
+MeasureLine <- FALSE
+source("Common.R")
 
 {
+    studpos <- studentnr + 10
     parcelwidth <- sample(seq(140,200,by=0.1),1)
     parcellength <- sample(seq(350,800,by=0.1),1)
     ## First row of parcels
