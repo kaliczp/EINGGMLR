@@ -13,6 +13,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
         modDATclass <- DATclass[!DATclass == "C"]
     } else {
         modDATclass <- DATclass
+        poly <- fulldf
     }
     ## Text?
     if(any(DATclass == "T")) {
