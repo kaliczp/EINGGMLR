@@ -82,7 +82,11 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
         addChildren(parcelNode, newXMLNode("RETEG_ID", 20, namespace = "eing"))
         addChildren(parcelNode, newXMLNode("RETEG_NEV", "Földrészletek" , namespace = "eing"))
         addChildren(parcelNode, newXMLNode("TELEPULES_ID", 3400, namespace = "eing"))
-        addChildren(parcelNode, newXMLNode("FEKVES", 3719, namespace = "eing")) # Belter
+        if(actDATcode %in% c("BC01", "BD01")) {
+            addChildren(parcelNode, newXMLNode("FEKVES", 3719, namespace = "eing")) # Belter
+        } else {
+            addChildren(parcelNode, newXMLNode("FEKVES", 3720, namespace = "eing"))  # Külterület
+        }
         if(actDATcode %in% c("BC01", "BC02")) {
             streethrsz <- st_drop_geometry(ParcelPoly[actualParcelPoly, "HRSZ", drop = TRUE])
             addChildren(parcelNode, newXMLNode("HRSZ", streethrsz, namespace = "eing"))
