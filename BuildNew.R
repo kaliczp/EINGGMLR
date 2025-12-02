@@ -117,6 +117,10 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
         parcelRing <- newXMLNode("LinearRing", parent=parcelExterior, namespace = "gml")
         addAttributes(parcelRing, srsDimension = 2)
         addChildren(parcelRing, newXMLNode("posList", paste(coords, collapse = " "), namespace = "gml"))
+        ## Create alrészlet in the case of rural parcels.
+        if(!IsBelter) {
+            ## Copy current parcel or create a new node?
+        }
     }
 ### Building
     if(any(DATclass == "C")) {
