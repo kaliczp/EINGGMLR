@@ -22,6 +22,8 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
     }
     ## Selected poly
     currParcelPoly <- which(ParcelPoly$Selected)
+    ## Külterület, belterület?
+    IsBelter <- ifelse(ParcelPoly[currParcelPoly, "OBJ_FELS", drop = TRUE] == "BD01", TRUE, FALSE)
     ## CRS
     srsName <- paste0("urn:x-ogc:def:crs:",st_crs(ParcelPoly)$input)
     ## Number of polys
@@ -82,7 +84,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
         addChildren(parcelNode, newXMLNode("RETEG_ID", 20, namespace = "eing"))
         addChildren(parcelNode, newXMLNode("RETEG_NEV", "Földrészletek" , namespace = "eing"))
         addChildren(parcelNode, newXMLNode("TELEPULES_ID", 3400, namespace = "eing"))
-        if(actDATcode %in% c("BC01", "BD01")) {
+        if(IsBelter) {
             addChildren(parcelNode, newXMLNode("FEKVES", 3719, namespace = "eing")) # Belter
         } else {
             addChildren(parcelNode, newXMLNode("FEKVES", 3720, namespace = "eing"))  # Külterület
@@ -92,13 +94,15 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
             addChildren(parcelNode, newXMLNode("HRSZ", streethrsz, namespace = "eing"))
             addChildren(parcelNode, newXMLNode("FELIRAT", paste0(
                                                               "(",
+                                                              ifelse(IsBelter, "", "0"),
                                                               streethrsz,
                                                               ")"),
                                                namespace = "eing"))
         } else {
             parcelhrsz <- st_drop_geometry(ParcelPoly[actualParcelPoly, "HRSZ", drop = TRUE])
             addChildren(parcelNode, newXMLNode("HRSZ", parcelhrsz, namespace = "eing"))
-            addChildren(parcelNode, newXMLNode("FELIRAT", parcelhrsz, namespace = "eing"))
+            parcelhrszfelirat <- ifelse(IsBelter, parcelhrsz, paste0("0",parcelhrsz))
+            addChildren(parcelNode, newXMLNode("FELIRAT", parcelhrszfelirat, namespace = "eing"))
         }
         addChildren(parcelNode, newXMLNode("SZINT", 0, namespace = "eing"))
         ## Text angle
