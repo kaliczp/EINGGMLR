@@ -7,6 +7,7 @@ studentnr <- 20
 megoszt <- TRUE # Double size parcel
 MeasureLine <- FALSE
 source("Common.R")
+source("BuildNew.R")
 
 {
     studpos <- studentnr + 10
