@@ -9,27 +9,27 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
     ## Building?
     if(any(DATclass == "C")) {
         epuletpoly <- fulldf[DATclass == "C",]
-        poly <- fulldf[!DATclass == "C",]
+        ParcelPoly <- fulldf[!DATclass == "C",]
         modDATclass <- DATclass[!DATclass == "C"]
     } else {
         modDATclass <- DATclass
-        poly <- fulldf
+        ParcelPoly <- fulldf
     }
     ## Text?
     if(any(DATclass == "T")) {
         texts <- fulldf[DATclass == "T",]
-        poly <- poly[!modDATclass == "T",]
+        ParcelPoly <- ParcelPoly[!modDATclass == "T",]
     }
     ## Selected poly
-    currpoly <- which(poly$Selected)
+    currParcelPoly <- which(ParcelPoly$Selected)
     ## CRS
-    srsName <- paste0("urn:x-ogc:def:crs:",st_crs(poly)$input)
+    srsName <- paste0("urn:x-ogc:def:crs:",st_crs(ParcelPoly)$input)
     ## Number of polys
-    nrpoly <- nrow(poly)
+    nrpoly <- nrow(ParcelPoly)
     ## Generate fids
     allfid <- round(abs(rnorm(1))*10^14) +
         round(abs(rnorm(nrpoly, sd = 0.01)*10^4))
-    currfid <- allfid[currpoly]
+    currfid <- allfid[currParcelPoly]
     doc <- newXMLDoc()
     ## Meta data creation
     ns <- c(eing = "eing.foldhivatal.hu",
@@ -52,39 +52,39 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
     ## Only two cases OK; 1 or more than 3
     if(nrpoly > 2) {
         ## Selected poly last in the order because point generation
-        orderedpoly <- c(1:(currpoly-1), (currpoly+1):nrpoly, currpoly)
+        orderedParcelPoly <- c(1:(currParcelPoly-1), (currParcelPoly+1):nrpoly, currParcelPoly)
     } else {
-        orderedpoly <- currpoly
+        orderedParcelPoly <- currParcelPoly
     }
-    for(actualpoly in orderedpoly) {
+    for(actualParcelPoly in orderedParcelPoly) {
         ## Coordinates prepcocessing
-        coords.matrix <- round(st_coordinates(poly[actualpoly,])[, c("X","Y")], 2)
+        coords.matrix <- round(st_coordinates(ParcelPoly[actualParcelPoly,])[, c("X","Y")], 2)
         coords <- as.numeric(t(coords.matrix))
         ## Remove duplicated points
         coords.matrix <- coords.matrix[!duplicated(coords.matrix),]
         ## Poly area calcualtion
         if(is.null(adminarea)) {
             ## Without error
-            adminareagen <- round(st_area(poly[actualpoly,]))
+            adminareagen <- round(st_area(ParcelPoly[actualParcelPoly,]))
         }
 ### Create features
         ## Create a parcel node
         parcelNode = newXMLNode("FOLDRESZLETEK", parent=metadataNode, namespace = "eing")
-        addAttributes(parcelNode, "gml:id" = paste0("fid-", allfid[actualpoly]))
+        addAttributes(parcelNode, "gml:id" = paste0("fid-", allfid[actualParcelPoly]))
         parcelBounded <- newXMLNode("boundedBy", parent=parcelNode, namespace = "gml")
         parcelEnvelope <- newXMLNode("Envelope", parent=parcelBounded, namespace = "gml")
         addAttributes(parcelEnvelope, srsDimension = 2, srsName = srsName) 
         addChildren(parcelEnvelope, newXMLNode("lowerCorner", paste(min(coords.matrix[,1]), min(coords.matrix[,2])), namespace = "gml"))
         addChildren(parcelEnvelope, newXMLNode("upperCorner", paste(max(coords.matrix[,1]), max(coords.matrix[,2])), namespace = "gml"))
-        addChildren(parcelNode, newXMLNode("GEOBJ_ID", allfid[actualpoly], namespace = "eing"))
-        actDATcode <- as.character(poly[actualpoly,"OBJ_FELS", drop = TRUE])
+        addChildren(parcelNode, newXMLNode("GEOBJ_ID", allfid[actualParcelPoly], namespace = "eing"))
+        actDATcode <- as.character(ParcelPoly[actualParcelPoly,"OBJ_FELS", drop = TRUE])
         addChildren(parcelNode, newXMLNode("OBJ_FELS", actDATcode, namespace = "eing"))
         addChildren(parcelNode, newXMLNode("RETEG_ID", 20, namespace = "eing"))
         addChildren(parcelNode, newXMLNode("RETEG_NEV", "Földrészletek" , namespace = "eing"))
         addChildren(parcelNode, newXMLNode("TELEPULES_ID", 3400, namespace = "eing"))
         addChildren(parcelNode, newXMLNode("FEKVES", 3719, namespace = "eing")) # Belter
         if(actDATcode %in% c("BC01", "BC02")) {
-            streethrsz <- st_drop_geometry(poly[actualpoly, "HRSZ", drop = TRUE])
+            streethrsz <- st_drop_geometry(ParcelPoly[actualParcelPoly, "HRSZ", drop = TRUE])
             addChildren(parcelNode, newXMLNode("HRSZ", streethrsz, namespace = "eing"))
             addChildren(parcelNode, newXMLNode("FELIRAT", paste0(
                                                               "(",
@@ -92,13 +92,13 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
                                                               ")"),
                                                namespace = "eing"))
         } else {
-            parcelhrsz <- st_drop_geometry(poly[actualpoly, "HRSZ", drop = TRUE])
+            parcelhrsz <- st_drop_geometry(ParcelPoly[actualParcelPoly, "HRSZ", drop = TRUE])
             addChildren(parcelNode, newXMLNode("HRSZ", parcelhrsz, namespace = "eing"))
             addChildren(parcelNode, newXMLNode("FELIRAT", parcelhrsz, namespace = "eing"))
         }
         addChildren(parcelNode, newXMLNode("SZINT", 0, namespace = "eing"))
         ## Text angle
-        textangle <- as.character(poly[actualpoly,"IRANY", drop = TRUE])
+        textangle <- as.character(ParcelPoly[actualParcelPoly,"IRANY", drop = TRUE])
         addChildren(parcelNode, newXMLNode("IRANY", textangle, namespace = "eing"))
         addChildren(parcelNode, newXMLNode("MUVEL_AG", 4557, namespace = "eing")) # Kivett
         addChildren(parcelNode, newXMLNode("JOGI_TERULET", adminareagen, namespace = "eing"))
@@ -158,7 +158,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
             addChildren(parcelNode, newXMLNode("IRANY", textangle, namespace = "eing"))
             addChildren(parcelNode, newXMLNode("SORSZAM", actbuildingpoly, namespace = "eing"))
             addChildren(parcelNode, newXMLNode("JOGI_TERULET", adminareagen, namespace = "eing"))
-            addChildren(parcelNode, newXMLNode("FRSZ_ID", allfid[currpoly], namespace = "eing"))
+            addChildren(parcelNode, newXMLNode("FRSZ_ID", allfid[currParcelPoly], namespace = "eing"))
             parcelGeometry <- newXMLNode("geometry", parent=parcelNode, namespace = "eing")
             parcelPolygon <- newXMLNode("Polygon", parent=parcelGeometry, namespace = "gml")
             addAttributes(parcelPolygon, srsDimension = 2, srsName = srsName) 
@@ -175,9 +175,9 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
     ## Random point geneeration related to original
     currfidother <- currfid + round(abs(rnorm(1))*10^4)
     ## Address coordinate if residential area non-public
-    if(DATcode[currpoly] == "BD01") {
+    if(DATcode[currParcelPoly] == "BD01") {
         suppressWarnings( # Prevent known warning about attributes
-            currcentroid <- st_centroid(poly[currpoly,])
+            currcentroid <- st_centroid(ParcelPoly[currParcelPoly,])
         )
         addresscoordpoint <- round(st_coordinates(currcentroid))
         pointNode <- newXMLNode("CIMKOORDINATA", parent=metadataNode, namespace = "eing")
