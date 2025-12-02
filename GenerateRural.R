@@ -76,7 +76,6 @@ source("BuildNew.R")
     polmult.df <- rbind(polmultnostreet.df, st_sf(data.frame(Selected = F, HRSZ = strhrsz, geom = streetPol)))
     polmult.df <- cbind(polmult.df, OBJ_FELS = c(rep("BD02", nrow(polmult.df)-1), "BC02"))
     kozterLine <- grep("BC", polmult.df[, "OBJ_FELS", drop = TRUE])
-    polmult.df <- rbind(polmult.df, polmult.df[kozterLine, ])
 ### Rotate polys
     ## In case of measure line
     if(MeasureLine) {
