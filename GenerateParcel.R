@@ -7,9 +7,8 @@ megoszt <- FALSE # Double size parcel
 onlyone <- TRUE # No neighbours
 MeasureLine <- FALSE
 BuildingInstIndicator <- FALSE
-
-## Rotate function
-rot <- function(a) matrix(c(cos(a), sin(a), -sin(a), cos(a)), 2, 2)
+source("Common.R")
+source("BuildNew.R")
 
 for(studentnr in 1:nrow(students)){
 studpos <- studentnr + 10
