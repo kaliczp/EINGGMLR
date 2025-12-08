@@ -166,7 +166,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
                                                namespace = "eing"))
             addChildren(parcelNode, newXMLNode("SZINT", 0, namespace = "eing"))
             ## Text angle
-            textangle <- as.character(poly[actualpoly,"IRANY", drop = TRUE])
+            textangle <- as.character(epuletpoly[actbuildingpoly,"IRANY", drop = TRUE])
             addChildren(parcelNode, newXMLNode("IRANY", textangle, namespace = "eing"))
             addChildren(parcelNode, newXMLNode("SORSZAM", actbuildingpoly, namespace = "eing"))
             addChildren(parcelNode, newXMLNode("JOGI_TERULET", adminareagen, namespace = "eing"))
