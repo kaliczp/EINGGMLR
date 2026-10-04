@@ -219,7 +219,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
     }
 ### Points generation
     ## Initial point id
-    pontszam <- 52421
+    pontszam <- 50000 + round(runif(1)*10^4)
     ## Points assigned to the polygon
     for(actualpoints in 1:nrow(coords.matrix)) {
         currfidother <- currfid + sample(1:5, 1)
