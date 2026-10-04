@@ -233,7 +233,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
         addChildren(pointEnvelope, newXMLNode("lowerCorner", paste(actualpoint, collapse = " "), namespace = "gml"))
         addChildren(pointEnvelope, newXMLNode("upperCorner", paste(actualpoint, collapse = " "), namespace = "gml"))
         addChildren(pointNode, newXMLNode("GEOBJ_ID", currfidother, namespace = "eing"))
-        if(actualpoints < 3) {
+        if(actualpoints < 3 | DATcode[currParcelPoly] == "BC01") { # First points or public place
             addChildren(pointNode, newXMLNode("OBJ_FELS", "AC01", namespace = "eing"))
         } else {
             addChildren(pointNode, newXMLNode("OBJ_FELS", "AC02", namespace = "eing"))
@@ -248,7 +248,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
         addChildren(pointNode, newXMLNode("IRANY", textangle, namespace = "eing"))
         addChildren(pointNode, newXMLNode("MAGASSAG", 0, namespace = "eing"))
         addChildren(pointNode, newXMLNode("PONTSZAM", pontszam, namespace = "eing"))
-        if(actualpoints < 3) {
+        if(actualpoints < 3 | DATcode[currParcelPoly] == "BC01") { # First points or public parcel
             addChildren(pointNode, newXMLNode("PONTKOD", 4195, namespace = "eing"))
         } else {
             if(actualpoints < 5) {
