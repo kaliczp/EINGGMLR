@@ -23,7 +23,8 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
     ## Selected poly
     currParcelPoly <- which(ParcelPoly$Selected)
     ## Külterület, belterület?
-    IsBelter <- ifelse(ParcelPoly[currParcelPoly, "OBJ_FELS", drop = TRUE] == "BD01", TRUE, FALSE)
+    ParcelDATClass <- ParcelPoly[currParcelPoly, "OBJ_FELS", drop = TRUE]
+    IsBelter <- ifelse(ParcelDATClass == "BD01" | ParcelDATClass == "BC01", TRUE, FALSE)
     ## CRS
     srsName <- paste0("urn:x-ogc:def:crs:",st_crs(ParcelPoly)$input)
     ## Number of polys
