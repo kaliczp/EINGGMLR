@@ -50,6 +50,7 @@ if(onlyone) {
     polmult.df <- cbind(polmult.df, IRANY = szovegszog)
     feliratszog <- polmult.df[2, "IRANY", drop = TRUE]
     polmult.df[2, "IRANY"] <- ifelse(feliratszog > 270, feliratszog - 270, feliratszog + 90)
+    point.coords.eov <- round(st_coordinates(polmult.df[1,])[, c("X","Y")], 2)
 } else {
     if(megoszt){
         pol3 <- pol2 +  2 * rep(c(parcelwidth, 0), 5)
