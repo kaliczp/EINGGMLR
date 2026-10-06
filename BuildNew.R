@@ -53,9 +53,9 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
     genericmeta <-  newXMLNode("GenericMetaData", parent = metaprop, namespace = "gml")
     metalist <-  newXMLNode("MetaDataList", parent = genericmeta)
     newXMLNode("gmlID", "691da01c-7911-45a7-b831-bc594bfaca16", parent = metalist)
-    newXMLNode("gmlExportDate", round(as.numeric(Sys.time())*1000), parent = metalist)
+    newXMLNode("gmlExportDate", as.numeric(Sys.time()), parent = metalist)
     newXMLNode("gmlGeobjIds", currfid, parent = metalist)
-    newXMLNode("xsdVersion", "2.4", parent = metalist)
+    newXMLNode("xsdVersion", "2.8", parent = metalist)
 ### Data processing
     ## First create featrue Members node
     metadataNode <- newXMLNode("featureMembers", parent = newgml, namespace = "gml")
