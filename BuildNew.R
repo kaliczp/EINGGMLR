@@ -20,6 +20,13 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
         texts <- fulldf[DATclass == "T",]
         ParcelPoly <- ParcelPoly[!modDATclass == "T",]
     }
+    ## Points?
+    if(any(DATclass == "A")) {
+        points <- fulldf[DATclass == "A",]
+        ParcelPoly <- ParcelPoly[!modDATclass == "A",]
+    } else {
+        warning("No points included")
+    }
     ## Selected poly
     currParcelPoly <- which(ParcelPoly$Selected)
     ## Külterület, belterület?
