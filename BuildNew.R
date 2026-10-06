@@ -31,7 +31,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
     currParcelPoly <- which(ParcelPoly$Selected)
     ## Külterület, belterület?
     ParcelDATClass <- ParcelPoly[currParcelPoly, "OBJ_FELS", drop = TRUE]
-    IsBelter <- ifelse(ParcelDATClass == "BD01" | ParcelDATClass == "BC01", TRUE, FALSE)
+    Fekves <- ifelse(ParcelDATClass == "BD01" | ParcelDATClass == "BC01", 3719, 3720) # Bel, kul
     ## CRS
     srsName <- paste0("urn:x-ogc:def:crs:",st_crs(ParcelPoly)$input)
     ## Number of polys
@@ -92,24 +92,20 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
         addChildren(parcelNode, newXMLNode("RETEG_ID", 20, namespace = "eing"))
         addChildren(parcelNode, newXMLNode("RETEG_NEV", "Földrészletek" , namespace = "eing"))
         addChildren(parcelNode, newXMLNode("TELEPULES_ID", 3400, namespace = "eing"))
-        if(IsBelter) {
-            addChildren(parcelNode, newXMLNode("FEKVES", 3719, namespace = "eing")) # Belter
-        } else {
-            addChildren(parcelNode, newXMLNode("FEKVES", 3720, namespace = "eing"))  # Külterület
-        }
+        addChildren(parcelNode, newXMLNode("FEKVES", Fekves, namespace = "eing"))
         if(actDATcode %in% c("BC01", "BC02")) {
             streethrsz <- st_drop_geometry(ParcelPoly[actualParcelPoly, "HRSZ", drop = TRUE])
             addChildren(parcelNode, newXMLNode("HRSZ", streethrsz, namespace = "eing"))
             addChildren(parcelNode, newXMLNode("FELIRAT", paste0(
                                                               "(",
-                                                              ifelse(IsBelter, "", "0"),
+                                                              ifelse(Fekves == 3719, "", "0"),
                                                               streethrsz,
                                                               ")"),
                                                namespace = "eing"))
         } else {
             parcelhrsz <- st_drop_geometry(ParcelPoly[actualParcelPoly, "HRSZ", drop = TRUE])
             addChildren(parcelNode, newXMLNode("HRSZ", parcelhrsz, namespace = "eing"))
-            parcelhrszfelirat <- ifelse(IsBelter, parcelhrsz, paste0("0",parcelhrsz))
+            parcelhrszfelirat <- ifelse(Fekves == 3719, parcelhrsz, paste0("0",parcelhrsz))
             addChildren(parcelNode, newXMLNode("FELIRAT", parcelhrszfelirat, namespace = "eing"))
         }
         addChildren(parcelNode, newXMLNode("SZINT", 0, namespace = "eing"))
@@ -126,7 +122,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
         addAttributes(parcelRing, srsDimension = 2)
         addChildren(parcelRing, newXMLNode("posList", paste(coords, collapse = " "), namespace = "gml"))
         ## Create alrészlet in the case of rural parcels.
-        if(!IsBelter) {
+        if(Fekves == 3720) {
             ## Copy current parcel or create a new node?
         }
     }
@@ -167,7 +163,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
             addChildren(parcelNode, newXMLNode("RETEG_ID", 8, namespace = "eing"))
             addChildren(parcelNode, newXMLNode("RETEG_NEV", "Épület" , namespace = "eing"))
             addChildren(parcelNode, newXMLNode("TELEPULES_ID", 3400, namespace = "eing"))
-            addChildren(parcelNode, newXMLNode("FEKVES", 3719, namespace = "eing")) # Belter
+            addChildren(parcelNode, newXMLNode("FEKVES", Fekves, namespace = "eing")) # Belter
             buildhrsz <- st_drop_geometry(epuletpoly[actbuildingpoly, "HRSZ", drop = TRUE])
             addChildren(parcelNode, newXMLNode("HRSZ", buildhrsz, namespace = "eing"))
             addChildren(parcelNode, newXMLNode("FELIRAT", paste(actbuildingpoly,"ép."),
@@ -189,7 +185,6 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
             ## Add buildcoords.matrix coords.matrix
             coords.matrix <- rbind(coords.matrix, buildcoords.matrix)
         }
-
     }
 ### Points
     ## Random point geneeration related to original
@@ -248,7 +243,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
         addChildren(pointNode, newXMLNode("RETEG_ID", 6, namespace = "eing"))
         addChildren(pointNode, newXMLNode("RETEG_NEV", "Részletpontok" , namespace = "eing"))
         addChildren(pointNode, newXMLNode("TELEPULES_ID", 3400, namespace = "eing"))
-        addChildren(pointNode, newXMLNode("FEKVES", 3719, namespace = "eing"))
+        addChildren(pointNode, newXMLNode("FEKVES", Fekves, namespace = "eing"))
         addChildren(pointNode, newXMLNode("HRSZ", namespace = "eing"))
         addChildren(pointNode, newXMLNode("FELIRAT", pontszam, namespace = "eing"))
         addChildren(pointNode, newXMLNode("SZINT", 0, namespace = "eing"))
