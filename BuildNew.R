@@ -19,11 +19,13 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
     if(any(DATclass == "T")) {
         texts <- fulldf[DATclass == "T",]
         ParcelPoly <- ParcelPoly[!modDATclass == "T",]
+        modDATclass <- modDATclass[!modDATclass == "T"]
     }
     ## Points?
     if(any(DATclass == "A")) {
         points <- fulldf[DATclass == "A",]
         ParcelPoly <- ParcelPoly[!modDATclass == "A",]
+        modDATclass <- modDATclass[!modDATclass == "A"]
     } else {
         warning("No points included")
     }
