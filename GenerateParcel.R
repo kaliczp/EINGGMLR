@@ -56,7 +56,7 @@ if(onlyone) {
                                     OBJ_FELS = c("AC01"),
                                     FELIRAT = "",
                                     IRANY = 0)
-                       , geometry = st_sfc(st_point(point.coords.eov[1,]))
+                       , geometry = st_sfc(st_multipoint(point.coords.eov))
                          )
     polmult.df <- rbind(polmult.df, ReszlPoints)
 } else {
