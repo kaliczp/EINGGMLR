@@ -229,6 +229,9 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
     ## Initial point id
     pontszam <- 50000 + round(runif(1)*10^4)
     ## Points assigned to the polygon
+    if(any(DATclass == "A")) {
+        coords.matrix <- st_coordinates(points)[, c("X","Y")]
+    }
     for(actualpoints in 1:nrow(coords.matrix)) {
         currfidother <- currfid + sample(1:5, 1)
         actualpoint <- coords.matrix[actualpoints,]
