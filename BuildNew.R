@@ -29,7 +29,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
     } else {
         warning("No points included")
     }
-    if(any(DATclass != "B")) {
+    if(any(modDATclass != "B")) {
         warning("Unprocessed class in input!")
     }
     ## Selected poly
