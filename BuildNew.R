@@ -29,6 +29,9 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
     } else {
         warning("No points included")
     }
+    if(any(DATclass != "B")) {
+        warning("Unprocessed class in input!")
+    }
     ## Selected poly
     currParcelPoly <- which(ParcelPoly$Selected)
     ## Külterület, belterület?
