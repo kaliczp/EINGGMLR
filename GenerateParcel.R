@@ -50,7 +50,10 @@ if(onlyone) {
     polmult.df <- cbind(polmult.df, IRANY = szovegszog)
     feliratszog <- polmult.df[2, "IRANY", drop = TRUE]
     polmult.df[2, "IRANY"] <- ifelse(feliratszog > 270, feliratszog - 270, feliratszog + 90)
+    ## Get rotated, shifted coordinates
     point.coords.eov <- round(st_coordinates(polmult.df[1,])[, c("X","Y")], 2)
+    ## Filter duplicated
+    point.coords.eov <- point.coords.eov[!duplicated(point.coords.eov),]
     ReszlPoints <- st_sf(data.frame(Selected = T,
                                     HRSZ=hrsz,
                                     OBJ_FELS = c("AC01"),
