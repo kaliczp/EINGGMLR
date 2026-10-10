@@ -243,11 +243,16 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
         addChildren(pointEnvelope, newXMLNode("lowerCorner", paste(actualpoint, collapse = " "), namespace = "gml"))
         addChildren(pointEnvelope, newXMLNode("upperCorner", paste(actualpoint, collapse = " "), namespace = "gml"))
         addChildren(pointNode, newXMLNode("GEOBJ_ID", currfidother, namespace = "eing"))
-        if(actualpoints < 3 | DATcode[currParcelPoly] == "BC01") { # First points or public place
-            addChildren(pointNode, newXMLNode("OBJ_FELS", "AC01", namespace = "eing"))
+        if(any(DATclass == "A")) {
+            PointDATcode <- points$OBJ_FELS
         } else {
-            addChildren(pointNode, newXMLNode("OBJ_FELS", "AC02", namespace = "eing"))
+            if(actualpoints < 3 | DATcode[currParcelPoly] == "BC01") { # First points or public place
+                PointDATcode <- "AC01"
+            } else {
+                PointDATcode <- "AC02"
+            }
         }
+        addChildren(pointNode, newXMLNode("OBJ_FELS", PointDATcode, namespace = "eing"))
         addChildren(pointNode, newXMLNode("RETEG_ID", 6, namespace = "eing"))
         addChildren(pointNode, newXMLNode("RETEG_NEV", "Részletpontok" , namespace = "eing"))
         addChildren(pointNode, newXMLNode("TELEPULES_ID", 3400, namespace = "eing"))
@@ -258,15 +263,19 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
         addChildren(pointNode, newXMLNode("IRANY", textangle, namespace = "eing"))
         addChildren(pointNode, newXMLNode("MAGASSAG", 0, namespace = "eing"))
         addChildren(pointNode, newXMLNode("PONTSZAM", pontszam, namespace = "eing"))
-        if(actualpoints < 3 | DATcode[currParcelPoly] == "BC01") { # First points or public parcel
-            addChildren(pointNode, newXMLNode("PONTKOD", 4195, namespace = "eing"))
+        if(any(DATclass == "A")) {
         } else {
-            if(actualpoints < 5) {
-                addChildren(pointNode, newXMLNode("PONTKOD", 4295, namespace = "eing"))
+            if(actualpoints < 3 | DATcode[currParcelPoly] == "BC01") { # First points or public parcel
+                PointNumCode <- 4195
             } else {
-                addChildren(pointNode, newXMLNode("PONTKOD", 4236, namespace = "eing"))
+                if(actualpoints < 5) {
+                    PointNumCode <- 4295
+                } else {
+                    PointNumCode <- 4236
+                }
             }
         }
+        addChildren(pointNode, newXMLNode("PONTKOD", PointNumCode, namespace = "eing"))
         addChildren(pointNode, newXMLNode("JELKULCS", 0, namespace = "eing"))
         pointGeometry <- newXMLNode("geometry", parent=pointNode, namespace = "eing")
         pointPoint <- newXMLNode("Point", parent=pointGeometry, namespace = "gml")
