@@ -264,7 +264,11 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
         addChildren(pointNode, newXMLNode("MAGASSAG", 0, namespace = "eing"))
         addChildren(pointNode, newXMLNode("PONTSZAM", pontszam, namespace = "eing"))
         if(any(DATclass == "A")) {
-            PointNumCode <- 4195
+            if(PointDATcode == "AC01") {
+                PointNumCode <- 4195
+            } else {
+                PointNumCode <- 4295
+            }
         } else {
             if(actualpoints < 3 | DATcode[currParcelPoly] == "BC01") { # First points or public parcel
                 PointNumCode <- 4195
