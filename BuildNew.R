@@ -27,7 +27,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
         ParcelPoly <- ParcelPoly[!modDATclass == "A",]
         modDATclass <- modDATclass[!modDATclass == "A"]
     } else {
-        warning("No points included")
+        error("No points (AC DAT class)included")
     }
     if(any(modDATclass != "B")) {
         warning("Unprocessed class in input!")
@@ -228,66 +228,49 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
 ### Points generation
     ## Initial point id
     pontszam <- 50000 + round(runif(1)*10^4)
-    ## Points assigned to the polygon
-    if(any(DATclass == "A")) {
-        coords.matrix <- st_coordinates(points)[, c("X","Y")]
-    }
-    for(actualpoints in 1:nrow(coords.matrix)) {
-        currfidother <- currfid + sample(1:5, 1)
-        actualpoint <- coords.matrix[actualpoints,]
-        pointNode <- newXMLNode("RESZLETPONTOK", parent=metadataNode, namespace = "eing")
-        addAttributes(pointNode, "gml:id" = paste0("fid-", currfidother))
-        pointBounded <- newXMLNode("boundedBy", parent=pointNode, namespace = "gml")
-        pointEnvelope <- newXMLNode("Envelope", parent=pointBounded, namespace = "gml")
-        addAttributes(pointEnvelope, srsDimension = 2, srsName = srsName)
-        addChildren(pointEnvelope, newXMLNode("lowerCorner", paste(actualpoint, collapse = " "), namespace = "gml"))
-        addChildren(pointEnvelope, newXMLNode("upperCorner", paste(actualpoint, collapse = " "), namespace = "gml"))
-        addChildren(pointNode, newXMLNode("GEOBJ_ID", currfidother, namespace = "eing"))
-        if(any(DATclass == "A")) {
-            PointDATcode <- points$OBJ_FELS
-        } else {
-            if(actualpoints < 3 | DATcode[currParcelPoly] == "BC01") { # First points or public place
-                PointDATcode <- "AC01"
-            } else {
-                PointDATcode <- "AC02"
-            }
-        }
-        addChildren(pointNode, newXMLNode("OBJ_FELS", PointDATcode, namespace = "eing"))
-        addChildren(pointNode, newXMLNode("RETEG_ID", 6, namespace = "eing"))
-        addChildren(pointNode, newXMLNode("RETEG_NEV", "Részletpontok" , namespace = "eing"))
-        addChildren(pointNode, newXMLNode("TELEPULES_ID", 3400, namespace = "eing"))
-        addChildren(pointNode, newXMLNode("FEKVES", Fekves, namespace = "eing"))
-        addChildren(pointNode, newXMLNode("HRSZ", namespace = "eing"))
-        addChildren(pointNode, newXMLNode("FELIRAT", pontszam, namespace = "eing"))
-        addChildren(pointNode, newXMLNode("SZINT", 0, namespace = "eing"))
-        addChildren(pointNode, newXMLNode("IRANY", textangle, namespace = "eing"))
-        addChildren(pointNode, newXMLNode("MAGASSAG", 0, namespace = "eing"))
-        addChildren(pointNode, newXMLNode("PONTSZAM", pontszam, namespace = "eing"))
-        if(any(DATclass == "A")) {
+    for(actualPointsRowNr in 1:nrow(points)) {
+        coords.matrix <- st_coordinates(points[actualPointsRowNr,])[, c("X","Y")]
+        for(actualpoints in 1:nrow(coords.matrix)) {
+            currfidother <- currfid + sample(1:5, 1)
+            actualpoint <- coords.matrix[actualpoints,]
+            pointNode <- newXMLNode("RESZLETPONTOK", parent=metadataNode, namespace = "eing")
+            addAttributes(pointNode, "gml:id" = paste0("fid-", currfidother))
+            pointBounded <- newXMLNode("boundedBy", parent=pointNode, namespace = "gml")
+            pointEnvelope <- newXMLNode("Envelope", parent=pointBounded, namespace = "gml")
+            addAttributes(pointEnvelope, srsDimension = 2, srsName = srsName)
+            addChildren(pointEnvelope, newXMLNode("lowerCorner", paste(actualpoint, collapse = " "), namespace = "gml"))
+            addChildren(pointEnvelope, newXMLNode("upperCorner", paste(actualpoint, collapse = " "), namespace = "gml"))
+            addChildren(pointNode, newXMLNode("GEOBJ_ID", currfidother, namespace = "eing"))
+            PointDATcode <- points[actualPointsRowNr,]$OBJ_FELS
+            addChildren(pointNode, newXMLNode("OBJ_FELS", PointDATcode, namespace = "eing"))
+            addChildren(pointNode, newXMLNode("RETEG_ID", 6, namespace = "eing"))
+            addChildren(pointNode, newXMLNode("RETEG_NEV", "Részletpontok" , namespace = "eing"))
+            addChildren(pointNode, newXMLNode("TELEPULES_ID", 3400, namespace = "eing"))
+            addChildren(pointNode, newXMLNode("FEKVES", Fekves, namespace = "eing"))
+            addChildren(pointNode, newXMLNode("HRSZ", namespace = "eing"))
+            addChildren(pointNode, newXMLNode("FELIRAT", pontszam, namespace = "eing"))
+            addChildren(pointNode, newXMLNode("SZINT", 0, namespace = "eing"))
+            addChildren(pointNode, newXMLNode("IRANY", textangle, namespace = "eing"))
+            addChildren(pointNode, newXMLNode("MAGASSAG", 0, namespace = "eing"))
+            addChildren(pointNode, newXMLNode("PONTSZAM", pontszam, namespace = "eing"))
             if(PointDATcode == "AC01") {
                 PointNumCode <- 4195
             } else {
-                PointNumCode <- 4295
-            }
-        } else {
-            if(actualpoints < 3 | DATcode[currParcelPoly] == "BC01") { # First points or public parcel
-                PointNumCode <- 4195
-            } else {
-                if(actualpoints < 5) {
-                    PointNumCode <- 4295
-                } else {
+                if(PointDATcode %in% c("CA01", "CA02", "CA06")) {
                     PointNumCode <- 4236
+                } else {
+                    PointNumCode <- 4295
                 }
             }
-        }
-        addChildren(pointNode, newXMLNode("PONTKOD", PointNumCode, namespace = "eing"))
-        addChildren(pointNode, newXMLNode("JELKULCS", 0, namespace = "eing"))
-        pointGeometry <- newXMLNode("geometry", parent=pointNode, namespace = "eing")
-        pointPoint <- newXMLNode("Point", parent=pointGeometry, namespace = "gml")
-        addAttributes(pointPoint, srsDimension = 2, srsName = srsName)
-        addChildren(pointPoint, newXMLNode("pos", paste(actualpoint, collapse = " "), namespace = "gml"))
-        pontszam <- pontszam + sample(1:5, 1)
-    }
+            addChildren(pointNode, newXMLNode("PONTKOD", PointNumCode, namespace = "eing"))
+            addChildren(pointNode, newXMLNode("JELKULCS", 0, namespace = "eing"))
+            pointGeometry <- newXMLNode("geometry", parent=pointNode, namespace = "eing")
+            pointPoint <- newXMLNode("Point", parent=pointGeometry, namespace = "gml")
+            addAttributes(pointPoint, srsDimension = 2, srsName = srsName)
+            addChildren(pointPoint, newXMLNode("pos", paste(actualpoint, collapse = " "), namespace = "gml"))
+            pontszam <- pontszam + sample(1:5, 1)
+        } # For loop actual points
+    } # For loop actualPointsRowNr
 ### Text preocessing
     if(any(DATclass == "T")) {
         warning("Text exist!")

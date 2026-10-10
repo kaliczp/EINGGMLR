@@ -175,13 +175,32 @@ if(onlyone) {
 point.coords.eov <- round(st_coordinates(polmult.df[1,])[, c("X","Y")], 2)
 ## Filter duplicated
 point.coords.eov <- point.coords.eov[!duplicated(point.coords.eov),]
-ReszlPoints <- st_sf(data.frame(Selected = T,
-                                HRSZ=hrsz,
-                                OBJ_FELS = c("AC01"),
-                                FELIRAT = "",
-                                IRANY = 0)
-                   , geometry = st_sfc(st_multipoint(point.coords.eov))
-                     )
+    if(polmult.df[1,]$OBJ_FELS == "BC01") { # Parcel is public or residential?
+        ReszlPoints <- st_sf(data.frame(Selected = T,
+                                        HRSZ=hrsz,
+                                        OBJ_FELS = c("AC01"),
+                                        FELIRAT = "",
+                                        IRANY = 0)
+                           , geometry = st_sfc(st_multipoint(point.coords.eov))
+                             )
+    } else { # Parcel is residential
+        ReszlPoints <- st_sf(data.frame(Selected = T,
+                                        HRSZ=hrsz,
+                                        OBJ_FELS = c("AC01"),
+                                        FELIRAT = "",
+                                        IRANY = 0),
+                             geometry = st_sfc(st_multipoint(point.coords.eov[1:2,]))
+                             )
+        ReszlPoints <- rbind(ReszlPoints,
+                             st_sf(data.frame(Selected = T,
+                                              HRSZ=hrsz,
+                                              OBJ_FELS = c("AC02"),
+                                              FELIRAT = "",
+                                              IRANY = 0),
+                                   geometry = st_sfc(st_multipoint(point.coords.eov[3:nrow(point.coords.eov),]))
+                                   )
+                             )
+    } # Parcel is public or residential?
 polmult.df <- rbind(polmult.df, ReszlPoints)
 ## Add CRS
 st_crs(polmult.df) <- 23700
