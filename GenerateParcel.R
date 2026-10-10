@@ -28,7 +28,9 @@ if(megoszt) {
     pol2 <- pol1 + rep(c(parcelwidth, 0), 5)
 }
 kozterName <- strsplit(students[studentnr,], split = " ")[[1]][2]
-if(onlyone) {
+    if(onlyone) {
+        if(building) {
+        } else {
     koztFeliratSzoveg <- paste(kozterName, "tér")
     koztFeliratHely <- st_centroid(pol1)
     koztFeliratHely <- koztFeliratHely + koztFeliratHely/4*c(1,0)
@@ -62,6 +64,7 @@ if(onlyone) {
                        , geometry = st_sfc(st_multipoint(point.coords.eov))
                          )
     polmult.df <- rbind(polmult.df, ReszlPoints)
+        }
 } else {
     if(megoszt){
         pol3 <- pol2 +  2 * rep(c(parcelwidth, 0), 5)
