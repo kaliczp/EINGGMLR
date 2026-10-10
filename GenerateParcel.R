@@ -28,44 +28,32 @@ if(megoszt) {
     pol2 <- pol1 + rep(c(parcelwidth, 0), 5)
 }
 kozterName <- strsplit(students[studentnr,], split = " ")[[1]][2]
-    if(onlyone) {
-        if(building) {
-        } else {
-    koztFeliratSzoveg <- paste(kozterName, "tér")
-    koztFeliratHely <- st_centroid(pol1)
-    koztFeliratHely <- koztFeliratHely + koztFeliratHely/4*c(1,0)
+if(onlyone) {
     polmult <- st_sfc(pol1)
     polmult.df <- st_sf(data.frame(Selected = T, geom=polmult))
-    polmult.df <- rbind(polmult.df,
-                        st_sf(data.frame(Selected = T, geom=st_sfc(koztFeliratHely)))
-                        )
-    polmult.df$geometry<-polmult.df$geometry*rot(studpos * pi/40) + c(864000, 100000)
+    if(building) {
+    } else {
+        koztFeliratSzoveg <- paste(kozterName, "tér")
+        koztFeliratHely <- st_centroid(pol1)
+        koztFeliratHely <- koztFeliratHely + koztFeliratHely/4*c(1,0)
+        polmult.df <- rbind(polmult.df,
+                            st_sf(data.frame(Selected = T, geom=st_sfc(koztFeliratHely)))
+                            )
+    }
     hrsz <- sample(60:580,1)
     polmult.df[, "HRSZ"] <- hrsz
-    polmult.df <- cbind(polmult.df,
-                        OBJ_FELS = c("BC01", "TX43"),
-                        FELIRAT = c("", koztFeliratSzoveg)
-                        )
-    ## Text rotation angle
-    szovegszog <- studpos*180/40 - 90
-    szovegszog <- ifelse(szovegszog < 0, szovegszog + 360, szovegszog)
-    polmult.df <- cbind(polmult.df, IRANY = szovegszog)
-    feliratszog <- polmult.df[2, "IRANY", drop = TRUE]
-    polmult.df[2, "IRANY"] <- ifelse(feliratszog > 270, feliratszog - 270, feliratszog + 90)
-    ## Get rotated, shifted coordinates
-    point.coords.eov <- round(st_coordinates(polmult.df[1,])[, c("X","Y")], 2)
-    ## Filter duplicated
-    point.coords.eov <- point.coords.eov[!duplicated(point.coords.eov),]
-    ReszlPoints <- st_sf(data.frame(Selected = T,
-                                    HRSZ=hrsz,
-                                    OBJ_FELS = c("AC01"),
-                                    FELIRAT = "",
-                                    IRANY = 0)
-                       , geometry = st_sfc(st_multipoint(point.coords.eov))
-                         )
-    polmult.df <- rbind(polmult.df, ReszlPoints)
-        }
-} else {
+    if(building) {
+        polmult.df <- cbind(polmult.df,
+                            OBJ_FELS = "BD01",
+                            FELIRAT = ""
+                            )
+    } else {
+        polmult.df <- cbind(polmult.df,
+                            OBJ_FELS = c("BC01", "TX43"),
+                            FELIRAT = c("", koztFeliratSzoveg)
+                            )
+    }
+} else { # Only one or more?
     if(megoszt){
         pol3 <- pol2 +  2 * rep(c(parcelwidth, 0), 5)
     } else {
@@ -162,20 +150,39 @@ builpolmult <- st_sfc(buildpol1, buildpol2)
     st_geometry(polmult.df)[kozterFeliratRow] <- koztFeliratHely
     polmult.df[kozterFeliratRow, "FELIRAT"] <- koztFeliratSzoveg
     polmult.df[kozterFeliratRow, "OBJ_FELS"] <- "TX43"
-### Rotate polys
     ## In case of measure line
     if(MeasureLine) {
         st_cast(polmult.df, "MULTIPOINT")
     }
-    polmult.df$geometry<-polmult.df$geometry*rot(studpos * pi/40) + c(864000, 100000)
+} # Only one or more?
+### Rotate polys
+polmult.df$geometry<-polmult.df$geometry*rot(studpos * pi/40) + c(864000, 100000)
 ### Text rotation angle
 szovegszog <- studpos*180/40 - 90
 szovegszog <- ifelse(szovegszog < 0, szovegszog + 360, szovegszog)
 polmult.df <- cbind(polmult.df, IRANY = szovegszog)
-streetangle <- szovegszog + 270
-streetangle <- ifelse(streetangle > 360, streetangle - 360, streetangle)
+if(onlyone) {
+    if(nrow(polmult.df) == 2) {
+        feliratszog <- polmult.df[2, "IRANY", drop = TRUE]
+        polmult.df[2, "IRANY"] <- ifelse(feliratszog > 270, feliratszog - 270, feliratszog + 90)
+    }
+} else {
+    streetangle <- szovegszog + 270
+    streetangle <- ifelse(streetangle > 360, streetangle - 360, streetangle)
     polmult.df[kozterLine, "IRANY"] <- streetangle
 }
+## Get rotated, shifted coordinates
+point.coords.eov <- round(st_coordinates(polmult.df[1,])[, c("X","Y")], 2)
+## Filter duplicated
+point.coords.eov <- point.coords.eov[!duplicated(point.coords.eov),]
+ReszlPoints <- st_sf(data.frame(Selected = T,
+                                HRSZ=hrsz,
+                                OBJ_FELS = c("AC01"),
+                                FELIRAT = "",
+                                IRANY = 0)
+                   , geometry = st_sfc(st_multipoint(point.coords.eov))
+                     )
+polmult.df <- rbind(polmult.df, ReszlPoints)
 ## Add CRS
 st_crs(polmult.df) <- 23700
 aktfilename <- paste0("Telkek/",gsub(" ", "", students[studentnr,]))
