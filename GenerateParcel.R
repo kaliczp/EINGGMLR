@@ -173,8 +173,10 @@ if(onlyone) {
 }
 ## Get rotated, shifted coordinates
     SelectedObjects <- polmult.df[polmult.df$Selected,]
-## Remove texts
-    SelectedObjects <- SelectedObjects[-grep("TX", SelectedObjects$OBJ_FELS),]
+    ## Remove texts if exists
+    if(length(grep("TX", SelectedObjects$OBJ_FELS)) > 0) {
+        SelectedObjects <- SelectedObjects[-grep("TX", SelectedObjects$OBJ_FELS),]
+    }
     point.coords.eov <- round(st_coordinates(SelectedObjects)[, c("X","Y")], 2)
 ## Filter duplicated
 point.coords.eov <- point.coords.eov[!duplicated(point.coords.eov),]
