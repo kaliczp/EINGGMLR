@@ -172,12 +172,15 @@ if(onlyone) {
     polmult.df[kozterLine, "IRANY"] <- streetangle
 }
 ## Get rotated, shifted coordinates
-point.coords.eov <- round(st_coordinates(polmult.df[1,])[, c("X","Y")], 2)
+    SelectedObjects <- polmult.df[polmult.df$Selected,]
+## Remove texts
+    SelectedObjects <- SelectedObjects[-grep("TX", SelectedObjects$OBJ_FELS),]
+    point.coords.eov <- round(st_coordinates(SelectedObjects)[, c("X","Y")], 2)
 ## Filter duplicated
 point.coords.eov <- point.coords.eov[!duplicated(point.coords.eov),]
     if(polmult.df[1,]$OBJ_FELS == "BC01") { # Parcel is public or residential?
         ReszlPoints <- st_sf(data.frame(Selected = T,
-                                        HRSZ=hrsz,
+                                        HRSZ=SelectedObjects[1,]$HRSZ,
                                         OBJ_FELS = c("AC01"),
                                         FELIRAT = "",
                                         IRANY = 0)
@@ -185,7 +188,7 @@ point.coords.eov <- point.coords.eov[!duplicated(point.coords.eov),]
                              )
     } else { # Parcel is residential
         ReszlPoints <- st_sf(data.frame(Selected = T,
-                                        HRSZ=hrsz,
+                                        HRSZ=SelectedObjects[1,]$HRSZ,
                                         OBJ_FELS = c("AC01"),
                                         FELIRAT = "",
                                         IRANY = 0),
@@ -193,7 +196,7 @@ point.coords.eov <- point.coords.eov[!duplicated(point.coords.eov),]
                              )
         ReszlPoints <- rbind(ReszlPoints,
                              st_sf(data.frame(Selected = T,
-                                              HRSZ=hrsz,
+                                              HRSZ=SelectedObjects[1,]$HRSZ,
                                               OBJ_FELS = c("AC02"),
                                               FELIRAT = "",
                                               IRANY = 0),
