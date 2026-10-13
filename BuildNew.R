@@ -1,4 +1,4 @@
-BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
+BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) {
     require(XML)
     require(sf)
     ## To prevent scientific notation
@@ -96,7 +96,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
         addChildren(parcelNode, newXMLNode("OBJ_FELS", actDATcode, namespace = "eing"))
         addChildren(parcelNode, newXMLNode("RETEG_ID", 20, namespace = "eing"))
         addChildren(parcelNode, newXMLNode("RETEG_NEV", "Földrészletek" , namespace = "eing"))
-        addChildren(parcelNode, newXMLNode("TELEPULES_ID", 3400, namespace = "eing"))
+        addChildren(parcelNode, newXMLNode("TELEPULES_ID", TelepulesId, namespace = "eing"))
         addChildren(parcelNode, newXMLNode("FEKVES", Fekves, namespace = "eing"))
         if(actDATcode %in% c("BC01", "BC02")) {
             streethrsz <- st_drop_geometry(ParcelPoly[actualParcelPoly, "HRSZ", drop = TRUE])
@@ -167,7 +167,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
             addChildren(parcelNode, newXMLNode("OBJ_FELS", actDATcode, namespace = "eing"))
             addChildren(parcelNode, newXMLNode("RETEG_ID", 8, namespace = "eing"))
             addChildren(parcelNode, newXMLNode("RETEG_NEV", "Épület" , namespace = "eing"))
-            addChildren(parcelNode, newXMLNode("TELEPULES_ID", 3400, namespace = "eing"))
+            addChildren(parcelNode, newXMLNode("TELEPULES_ID", TelepulesId, namespace = "eing"))
             addChildren(parcelNode, newXMLNode("FEKVES", Fekves, namespace = "eing")) # Belter
             buildhrsz <- st_drop_geometry(epuletpoly[actbuildingpoly, "HRSZ", drop = TRUE])
             addChildren(parcelNode, newXMLNode("HRSZ", buildhrsz, namespace = "eing"))
@@ -211,7 +211,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
         addChildren(pointNode, newXMLNode("OBJ_FELS", "AD01", namespace = "eing"))
         addChildren(pointNode, newXMLNode("RETEG_ID", 52, namespace = "eing"))
         addChildren(pointNode, newXMLNode("RETEG_NEV", "Címkoordináták" , namespace = "eing"))
-        addChildren(pointNode, newXMLNode("TELEPULES_ID", 3400, namespace = "eing"))
+        addChildren(pointNode, newXMLNode("TELEPULES_ID", TelepulesId, namespace = "eing"))
         addChildren(pointNode, newXMLNode("HRSZ", parcelhrsz, namespace = "eing"))
         addChildren(pointNode, newXMLNode("FELIRAT", 1, namespace = "eing"))
         addChildren(pointNode, newXMLNode("SZINT", 0, namespace = "eing"))
@@ -245,7 +245,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
             addChildren(pointNode, newXMLNode("OBJ_FELS", PointDATcode, namespace = "eing"))
             addChildren(pointNode, newXMLNode("RETEG_ID", 6, namespace = "eing"))
             addChildren(pointNode, newXMLNode("RETEG_NEV", "Részletpontok" , namespace = "eing"))
-            addChildren(pointNode, newXMLNode("TELEPULES_ID", 3400, namespace = "eing"))
+            addChildren(pointNode, newXMLNode("TELEPULES_ID", TelepulesId, namespace = "eing"))
             addChildren(pointNode, newXMLNode("FEKVES", Fekves, namespace = "eing"))
             addChildren(pointNode, newXMLNode("HRSZ", namespace = "eing"))
             addChildren(pointNode, newXMLNode("FELIRAT", pontszam, namespace = "eing"))
@@ -288,7 +288,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL) {
         addChildren(textNode, newXMLNode("OBJ_FELS", actualtext$OBJ_FELS, namespace = "eing"))
         addChildren(textNode, newXMLNode("RETEG_ID", 2, namespace = "eing"))
         addChildren(textNode, newXMLNode("RETEG_NEV", "Feliratok" , namespace = "eing"))
-        addChildren(textNode, newXMLNode("TELEPULES_ID", 3400, namespace = "eing"))
+        addChildren(textNode, newXMLNode("TELEPULES_ID", TelepulesId, namespace = "eing"))
         actualHRSZ <- st_drop_geometry(actualtext[,"HRSZ", drop = TRUE])
         if(actualHRSZ != "") {
             addChildren(textNode, newXMLNode("HRSZ", actualHRSZ, namespace = "eing"))
