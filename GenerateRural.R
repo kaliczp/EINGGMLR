@@ -89,6 +89,26 @@ source("BuildNew.R")
     streetangle <- szovegszog + 270
     streetangle <- ifelse(streetangle > 360, streetangle - 360, streetangle)
     polmult.df[kozterLine, "IRANY"] <- streetangle
+## Get rotated, shifted coordinates
+    SelectedObjects <- polmult.df[polmult.df$Selected,]
+    point.coords.eov <- round(st_coordinates(SelectedObjects)[, c("X","Y")], 2)
+    ## Filter duplicated
+    point.coords.eov <- point.coords.eov[!duplicated(point.coords.eov),]
+    ReszlPoints <- st_sf(data.frame(Selected = T,
+                                    HRSZ=SelectedObjects[1,]$HRSZ,
+                                    OBJ_FELS = c("AC02"),
+                                    IRANY = 0),
+                         geometry = st_sfc(st_multipoint(point.coords.eov[1:2,]))
+                         )
+    ReszlPoints <- rbind(ReszlPoints,
+                         st_sf(data.frame(Selected = T,
+                                          HRSZ=SelectedObjects[1,]$HRSZ,
+                                          OBJ_FELS = c("AC03"),
+                                          IRANY = 0),
+                               geometry = st_sfc(st_multipoint(point.coords.eov[3:nrow(point.coords.eov),]))
+                               )
+                         )
+    polmult.df <- rbind(polmult.df, ReszlPoints)
     ## Add CRS
     st_crs(polmult.df) <- 23700
     aktfilename <- paste0("Telkek/",gsub(" ", "", students[studentnr,]))
