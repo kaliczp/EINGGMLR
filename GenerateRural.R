@@ -109,6 +109,12 @@ source("BuildNew.R")
                                )
                          )
     polmult.df <- rbind(polmult.df, ReszlPoints)
+    ## Additional selected
+    Alresz <- SelectedObjects
+    Alresz$OBJ_FELS <- "BETM"
+    Minoszt <- SelectedObjects
+    Minoszt$OBJ_FELS <- "BF01"
+    polmult.df <- rbind(polmult.df, Alresz, Minoszt)
     ## Add CRS
     st_crs(polmult.df) <- 23700
     aktfilename <- paste0("Telkek/",gsub(" ", "", students[studentnr,]))

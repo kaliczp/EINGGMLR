@@ -29,6 +29,13 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
     } else {
         error("No points (AC DAT class)included")
     }
+    ## Nonresid?
+    if(any(DATcode == "BETM")) {
+        NonresidPoly <- fulldf[DATcode == "BETM",]
+        ParcelPoly <- ParcelPoly[!ParcelPoly$OBJ_FELS == "BETM",]
+        NonresidPoly <- cbind(NonresidPoly, fulldf[DATcode == "BF01",])
+        ParcelPoly <- ParcelPoly[!ParcelPoly$OBJ_FELS == "BF01",]
+    }
     if(any(modDATclass != "B")) {
         warning("Unprocessed class in input!")
     }
@@ -88,7 +95,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
         addAttributes(parcelNode, "gml:id" = paste0("fid-", allfid[actualParcelPoly]))
         parcelBounded <- newXMLNode("boundedBy", parent=parcelNode, namespace = "gml")
         parcelEnvelope <- newXMLNode("Envelope", parent=parcelBounded, namespace = "gml")
-        addAttributes(parcelEnvelope, srsDimension = 2, srsName = srsName) 
+        addAttributes(parcelEnvelope, srsDimension = 2, srsName = srsName)
         addChildren(parcelEnvelope, newXMLNode("lowerCorner", paste(min(coords.matrix[,1]), min(coords.matrix[,2])), namespace = "gml"))
         addChildren(parcelEnvelope, newXMLNode("upperCorner", paste(max(coords.matrix[,1]), max(coords.matrix[,2])), namespace = "gml"))
         addChildren(parcelNode, newXMLNode("GEOBJ_ID", allfid[actualParcelPoly], namespace = "eing"))
@@ -121,15 +128,92 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
         addChildren(parcelNode, newXMLNode("JOGI_TERULET", adminareagen, namespace = "eing"))
         parcelGeometry <- newXMLNode("geometry", parent=parcelNode, namespace = "eing")
         parcelPolygon <- newXMLNode("Polygon", parent=parcelGeometry, namespace = "gml")
-        addAttributes(parcelPolygon, srsDimension = 2, srsName = srsName) 
+        addAttributes(parcelPolygon, srsDimension = 2, srsName = srsName)
         parcelExterior <- newXMLNode("exterior", parent=parcelPolygon, namespace = "gml")
         parcelRing <- newXMLNode("LinearRing", parent=parcelExterior, namespace = "gml")
         addAttributes(parcelRing, srsDimension = 2)
         addChildren(parcelRing, newXMLNode("posList", paste(coords, collapse = " "), namespace = "gml"))
+        foldrID <- allfid[actualParcelPoly] # Collect all actual parcelID
+    } # for foldr
         ## Create alrészlet in the case of rural parcels.
-        if(Fekves == 3720) {
-            ## Copy current parcel or create a new node?
-        }
+    if(Fekves[1] == 3720) {
+        ### Alreszl
+        ## fid extension
+        extrafid <- allfid[actualParcelPoly] + round(abs(rnorm(nrpoly, sd = 0.01)*10^5))
+        AlreszPoly <- NonresidPoly[NonresidPoly$OBJ_FELS == "BATM",]
+        ## Create a new alreszl
+        parcelNode = newXMLNode("ALRESZLETEK", parent=metadataNode, namespace = "eing")
+        addAttributes(parcelNode, "gml:id" = paste0("fid-", extrafid))
+        parcelBounded <- newXMLNode("boundedBy", parent=parcelNode, namespace = "gml")
+        parcelEnvelope <- newXMLNode("Envelope", parent=parcelBounded, namespace = "gml")
+        addAttributes(parcelEnvelope, srsDimension = 2, srsName = srsName)
+        addChildren(parcelEnvelope, newXMLNode("lowerCorner", paste(min(coords.matrix[,1]), min(coords.matrix[,2])), namespace = "gml"))
+        addChildren(parcelEnvelope, newXMLNode("upperCorner", paste(max(coords.matrix[,1]), max(coords.matrix[,2])), namespace = "gml"))
+        addChildren(parcelNode, newXMLNode("GEOBJ_ID", extrafid, namespace = "eing"))
+        actDATcode <- as.character(AlreszPoly[,"OBJ_FELS", drop = TRUE])
+        addChildren(parcelNode, newXMLNode("OBJ_FELS", actDATcode, namespace = "eing"))
+        addChildren(parcelNode, newXMLNode("RETEG_ID", 21, namespace = "eing"))
+        addChildren(parcelNode, newXMLNode("RETEG_NEV", "Alrészletek" , namespace = "eing"))
+        addChildren(parcelNode, newXMLNode("TELEPULES_ID", TelepulesId, namespace = "eing"))
+        addChildren(parcelNode, newXMLNode("FEKVES", Fekves, namespace = "eing"))
+        parcelhrsz <- st_drop_geometry(AlreszPoly[AlreszPoly, "HRSZ", drop = TRUE])
+        addChildren(parcelNode, newXMLNode("HRSZ", parcelhrsz, namespace = "eing"))
+        parcelhrszfelirat <- ifelse(Fekves == 3719, parcelhrsz, paste0("0",parcelhrsz))
+        addChildren(parcelNode, newXMLNode("ALATORES", namespace = "eing"))
+        addChildren(parcelNode, newXMLNode("FELIRAT", namespace = "eing"))
+        addChildren(parcelNode, newXMLNode("SZINT", 0, namespace = "eing"))
+        ## Text angle
+        textangle <- as.character(ParcelPoly[actualParcelPoly,"IRANY", drop = TRUE])
+        addChildren(parcelNode, newXMLNode("IRANY", textangle, namespace = "eing"))
+        addChildren(parcelNode, newXMLNode("MUVEL_AG", 1000001970, namespace = "eing")) # Nem ism
+        addChildren(parcelNode, newXMLNode("JOGI_TERULET", adminareagen, namespace = "eing"))
+        addChildren(parcelNode, newXMLNode("FRSZ_ID", foldrID[1], namespace = "eing")) # Nem ism
+        parcelGeometry <- newXMLNode("geometry", parent=parcelNode, namespace = "eing")
+        parcelPolygon <- newXMLNode("Polygon", parent=parcelGeometry, namespace = "gml")
+        addAttributes(parcelPolygon, srsDimension = 2, srsName = srsName)
+        parcelExterior <- newXMLNode("exterior", parent=parcelPolygon, namespace = "gml")
+        parcelRing <- newXMLNode("LinearRing", parent=parcelExterior, namespace = "gml")
+        addAttributes(parcelRing, srsDimension = 2)
+        addChildren(parcelRing, newXMLNode("posList", paste(coords, collapse = " "), namespace = "gml"))
+        alrID <- extrafid # Collect all in one object
+        ## Quality class
+        QualityClassPoly <- NonresidPoly[NonresidPoly$OBJ_FELS == "BF01",]
+        extrafid <- extrafid + round(abs(rnorm(nrpoly, sd = 0.01)*10^2))
+        ## Create a new quality class
+        parcelNode = newXMLNode("TERMOFOLD_MINOSEGI_OSZTALYOK", parent=metadataNode, namespace = "eing")
+        addAttributes(parcelNode, "gml:id" = paste0("fid-", extrafid))
+        parcelBounded <- newXMLNode("boundedBy", parent=parcelNode, namespace = "gml")
+        parcelEnvelope <- newXMLNode("Envelope", parent=parcelBounded, namespace = "gml")
+        addAttributes(parcelEnvelope, srsDimension = 2, srsName = srsName)
+        addChildren(parcelEnvelope, newXMLNode("lowerCorner", paste(min(coords.matrix[,1]), min(coords.matrix[,2])), namespace = "gml"))
+        addChildren(parcelEnvelope, newXMLNode("upperCorner", paste(max(coords.matrix[,1]), max(coords.matrix[,2])), namespace = "gml"))
+        addChildren(parcelNode, newXMLNode("GEOBJ_ID", extrafid, namespace = "eing"))
+        actDATcode <- as.character(QualityClassPoly[,"OBJ_FELS", drop = TRUE])
+        addChildren(parcelNode, newXMLNode("OBJ_FELS", actDATcode, namespace = "eing"))
+        addChildren(parcelNode, newXMLNode("RETEG_ID", 23, namespace = "eing"))
+        addChildren(parcelNode, newXMLNode("RETEG_NEV", "Termőföld-minőségi osztályok" , namespace = "eing"))
+        addChildren(parcelNode, newXMLNode("TELEPULES_ID", TelepulesId, namespace = "eing"))
+        addChildren(parcelNode, newXMLNode("FEKVES", Fekves, namespace = "eing"))
+        parcelhrsz <- st_drop_geometry(AlreszPoly[AlreszPoly, "HRSZ", drop = TRUE])
+        addChildren(parcelNode, newXMLNode("HRSZ", parcelhrsz, namespace = "eing"))
+        parcelhrszfelirat <- "Sz4"
+        addChildren(parcelNode, newXMLNode("FELIRAT", parcelhrszfelirat, namespace = "eing"))
+        addChildren(parcelNode, newXMLNode("SZINT", 0, namespace = "eing"))
+        ## Text angle
+        textangle <- as.character(ParcelPoly[actualParcelPoly,"IRANY", drop = TRUE])
+        addChildren(parcelNode, newXMLNode("IRANY", textangle, namespace = "eing"))
+        addChildren(parcelNode, newXMLNode("MUVEL_AG", 4561, namespace = "eing")) # Nem ism
+        addChildren(parcelNode, newXMLNode("JOGI_TERULET", adminareagen, namespace = "eing"))
+        addChildren(parcelNode, newXMLNode("MIN_OSZT", 1000001504, namespace = "eing")) # Nem ism
+        addChildren(parcelNode, newXMLNode("ALR_ID", alrID[1], namespace = "eing")) # Nem ism
+        addChildren(parcelNode, newXMLNode("FRSZ_ID", foldrID[1], namespace = "eing")) # Nem ism
+        parcelGeometry <- newXMLNode("geometry", parent=parcelNode, namespace = "eing")
+        parcelPolygon <- newXMLNode("Polygon", parent=parcelGeometry, namespace = "gml")
+        addAttributes(parcelPolygon, srsDimension = 2, srsName = srsName)
+        parcelExterior <- newXMLNode("exterior", parent=parcelPolygon, namespace = "gml")
+        parcelRing <- newXMLNode("LinearRing", parent=parcelExterior, namespace = "gml")
+        addAttributes(parcelRing, srsDimension = 2)
+        addChildren(parcelRing, newXMLNode("posList", paste(coords, collapse = " "), namespace = "gml"))
     }
 ### Building
     if(any(DATclass == "C")) {
@@ -152,7 +236,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
             addAttributes(parcelNode, "gml:id" = paste0("fid-", buildfid[actbuildingpoly]))
             parcelBounded <- newXMLNode("boundedBy", parent=parcelNode, namespace = "gml")
             parcelEnvelope <- newXMLNode("Envelope", parent=parcelBounded, namespace = "gml")
-            addAttributes(parcelEnvelope, srsDimension = 2, srsName = srsName) 
+            addAttributes(parcelEnvelope, srsDimension = 2, srsName = srsName)
             addChildren(parcelEnvelope, newXMLNode("lowerCorner",
                                                    paste(min(buildcoords.matrix[,1]),
                                                          min(buildcoords.matrix[,2])),
@@ -182,7 +266,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
             addChildren(parcelNode, newXMLNode("FRSZ_ID", allfid[currParcelPoly], namespace = "eing"))
             parcelGeometry <- newXMLNode("geometry", parent=parcelNode, namespace = "eing")
             parcelPolygon <- newXMLNode("Polygon", parent=parcelGeometry, namespace = "gml")
-            addAttributes(parcelPolygon, srsDimension = 2, srsName = srsName) 
+            addAttributes(parcelPolygon, srsDimension = 2, srsName = srsName)
             parcelExterior <- newXMLNode("exterior", parent=parcelPolygon, namespace = "gml")
             parcelRing <- newXMLNode("LinearRing", parent=parcelExterior, namespace = "gml")
             addAttributes(parcelRing, srsDimension = 2)
