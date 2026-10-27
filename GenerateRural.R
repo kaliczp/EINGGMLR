@@ -2,7 +2,7 @@ library(sf)
 
 students <- read.table("export.csv", sep = ";", head = TRUE)
 
-studentnr <- 20
+studentnr <- 1
 
 megoszt <- TRUE # Double size parcel
 MeasureLine <- FALSE
