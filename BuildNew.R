@@ -139,7 +139,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
     if(Fekves[1] == 3720) {
         ### Alreszl
         ## fid extension
-        extrafid <- allfid[actualParcelPoly] + round(abs(rnorm(nrpoly, sd = 0.01)*10^5))
+        extrafid <- allfid[actualParcelPoly] + round(abs(rnorm(1, sd = 0.01)*10^5))
         AlreszPoly <- NonresidPoly[NonresidPoly$OBJ_FELS == "BATM",]
         ## Create a new alreszl
         parcelNode = newXMLNode("ALRESZLETEK", parent=metadataNode, namespace = "eing")
@@ -178,7 +178,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
         alrID <- extrafid # Collect all in one object
         ## Quality class
         QualityClassPoly <- NonresidPoly[NonresidPoly$OBJ_FELS == "BF01",]
-        extrafid <- extrafid + round(abs(rnorm(nrpoly, sd = 0.01)*10^2))
+        extrafid <- extrafid + round(abs(rnorm(1, sd = 0.01)*10^2))
         ## Create a new quality class
         parcelNode = newXMLNode("TERMOFOLD_MINOSEGI_OSZTALYOK", parent=metadataNode, namespace = "eing")
         addAttributes(parcelNode, "gml:id" = paste0("fid-", extrafid))
