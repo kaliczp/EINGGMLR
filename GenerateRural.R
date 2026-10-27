@@ -75,6 +75,8 @@ source("BuildNew.R")
     strhrsz <- as.numeric(hrsz[2]) - streetLeftRight[1] - 1
     polmult.df <- rbind(polmultnostreet.df, st_sf(data.frame(Selected = F, HRSZ = strhrsz, geom = streetPol)))
     polmult.df <- cbind(polmult.df, OBJ_FELS = c(rep("BD02", nrow(polmult.df)-1), "BC02"))
+    ## FELIRAT field
+    polmult.df$FELIRAT <- NA
     kozterLine <- grep("BC", polmult.df[, "OBJ_FELS", drop = TRUE])
 ### Rotate polys
     ## In case of measure line
@@ -97,6 +99,7 @@ source("BuildNew.R")
     ReszlPoints <- st_sf(data.frame(Selected = T,
                                     HRSZ=SelectedObjects[1,]$HRSZ,
                                     OBJ_FELS = c("AC02"),
+                                    FELIRAT = NA,
                                     IRANY = 0),
                          geometry = st_sfc(st_multipoint(point.coords.eov[1:2,]))
                          )
@@ -104,6 +107,7 @@ source("BuildNew.R")
                          st_sf(data.frame(Selected = T,
                                           HRSZ=SelectedObjects[1,]$HRSZ,
                                           OBJ_FELS = c("AC03"),
+                                          FELIRAT = NA,
                                           IRANY = 0),
                                geometry = st_sfc(st_multipoint(point.coords.eov[3:nrow(point.coords.eov),]))
                                )
@@ -114,6 +118,7 @@ source("BuildNew.R")
     Alresz$OBJ_FELS <- "BETM"
     Minoszt <- SelectedObjects
     Minoszt$OBJ_FELS <- "BF01"
+    Minoszt$FELIRAT <- "Sz5"
     polmult.df <- rbind(polmult.df, Alresz, Minoszt)
     ## Add CRS
     st_crs(polmult.df) <- 23700

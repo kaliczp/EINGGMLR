@@ -196,7 +196,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
         addChildren(parcelNode, newXMLNode("FEKVES", Fekves, namespace = "eing"))
         parcelhrsz <- st_drop_geometry(QualityClassPoly[QualityClassPoly, "HRSZ", drop = TRUE])
         addChildren(parcelNode, newXMLNode("HRSZ", parcelhrsz, namespace = "eing"))
-        parcelhrszfelirat <- "Sz4"
+        parcelhrszfelirat <- st_drop_geometry(QualityClassPoly[QualityClassPoly, "FELIRAT", drop = TRUE])
         addChildren(parcelNode, newXMLNode("FELIRAT", parcelhrszfelirat, namespace = "eing"))
         addChildren(parcelNode, newXMLNode("SZINT", 0, namespace = "eing"))
         ## Text angle
