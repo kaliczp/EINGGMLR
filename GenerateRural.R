@@ -88,7 +88,7 @@ source("BuildNew.R")
     szovegszog <- studpos*180/40 - 90
     szovegszog <- ifelse(szovegszog < 0, szovegszog + 360, szovegszog)
     polmult.df <- cbind(polmult.df, IRANY = szovegszog)
-    streetangle <- szovegszog + 270
+    streetangle <- szovegszog + 90
     streetangle <- ifelse(streetangle > 360, streetangle - 360, streetangle)
     polmult.df[kozterLine, "IRANY"] <- streetangle
 ## Get rotated, shifted coordinates
