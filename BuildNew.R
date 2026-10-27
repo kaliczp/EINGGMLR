@@ -33,7 +33,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
     if(any(DATcode == "BETM")) {
         NonresidPoly <- fulldf[DATcode == "BETM",]
         ParcelPoly <- ParcelPoly[!ParcelPoly$OBJ_FELS == "BETM",]
-        NonresidPoly <- cbind(NonresidPoly, fulldf[DATcode == "BF01",])
+        NonresidPoly <- rbind(NonresidPoly, fulldf[DATcode == "BF01",])
         ParcelPoly <- ParcelPoly[!ParcelPoly$OBJ_FELS == "BF01",]
     }
     if(any(modDATclass != "B")) {
@@ -140,7 +140,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
         ### Alreszl
         ## fid extension
         extrafid <- allfid[actualParcelPoly] + round(abs(rnorm(1, sd = 0.01)*10^5))
-        AlreszPoly <- NonresidPoly[NonresidPoly$OBJ_FELS == "BATM",]
+        AlreszPoly <- NonresidPoly[NonresidPoly$OBJ_FELS == "BETM",]
         ## Create a new alreszl
         parcelNode = newXMLNode("ALRESZLETEK", parent=metadataNode, namespace = "eing")
         addAttributes(parcelNode, "gml:id" = paste0("fid-", extrafid))
@@ -194,7 +194,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
         addChildren(parcelNode, newXMLNode("RETEG_NEV", "Termőföld-minőségi osztályok" , namespace = "eing"))
         addChildren(parcelNode, newXMLNode("TELEPULES_ID", TelepulesId, namespace = "eing"))
         addChildren(parcelNode, newXMLNode("FEKVES", Fekves, namespace = "eing"))
-        parcelhrsz <- st_drop_geometry(AlreszPoly[AlreszPoly, "HRSZ", drop = TRUE])
+        parcelhrsz <- st_drop_geometry(QualityClassPoly[QualityClassPoly, "HRSZ", drop = TRUE])
         addChildren(parcelNode, newXMLNode("HRSZ", parcelhrsz, namespace = "eing"))
         parcelhrszfelirat <- "Sz4"
         addChildren(parcelNode, newXMLNode("FELIRAT", parcelhrszfelirat, namespace = "eing"))
