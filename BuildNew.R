@@ -135,7 +135,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
         addChildren(parcelRing, newXMLNode("posList", paste(coords, collapse = " "), namespace = "gml"))
         foldrID <- allfid[actualParcelPoly] # Collect all actual parcelID
     } # for foldr
-        ## Create alrészlet in the case of rural parcels.
+### Create alrészlet in the case of rural parcels.
     if(Fekves[1] == 3720) {
         ### Alreszl
         ## fid extension
