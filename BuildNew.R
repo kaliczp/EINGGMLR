@@ -196,15 +196,16 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
         addChildren(parcelNode, newXMLNode("FEKVES", Fekves, namespace = "eing"))
         parcelhrsz <- st_drop_geometry(QualityClassPoly[QualityClassPoly, "HRSZ", drop = TRUE])
         addChildren(parcelNode, newXMLNode("HRSZ", parcelhrsz, namespace = "eing"))
-        parcelhrszfelirat <- st_drop_geometry(QualityClassPoly[QualityClassPoly, "FELIRAT", drop = TRUE])
-        addChildren(parcelNode, newXMLNode("FELIRAT", parcelhrszfelirat, namespace = "eing"))
+        QualText <- st_drop_geometry(QualityClassPoly[QualityClassPoly, "FELIRAT", drop = TRUE])
+        QualClassNr <- as.numeric(substring(QualText, nchar(QualText)))
+        addChildren(parcelNode, newXMLNode("FELIRAT", QualText, namespace = "eing"))
         addChildren(parcelNode, newXMLNode("SZINT", 0, namespace = "eing"))
         ## Text angle
         textangle <- as.character(ParcelPoly[actualParcelPoly,"IRANY", drop = TRUE])
         addChildren(parcelNode, newXMLNode("IRANY", textangle, namespace = "eing"))
         addChildren(parcelNode, newXMLNode("MUVEL_AG", 4561, namespace = "eing")) # Nem ism
         addChildren(parcelNode, newXMLNode("JOGI_TERULET", adminareagen, namespace = "eing"))
-        addChildren(parcelNode, newXMLNode("MIN_OSZT", 1000001504, namespace = "eing")) # Nem ism
+        addChildren(parcelNode, newXMLNode("MIN_OSZT", 1000001500 + QualClassNr, namespace = "eing")) # Nem ism
         addChildren(parcelNode, newXMLNode("ALR_ID", alrID[1], namespace = "eing")) # Nem ism
         addChildren(parcelNode, newXMLNode("FRSZ_ID", foldrID[1], namespace = "eing")) # Nem ism
         parcelGeometry <- newXMLNode("geometry", parent=parcelNode, namespace = "eing")

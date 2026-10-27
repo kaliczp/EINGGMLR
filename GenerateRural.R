@@ -118,7 +118,7 @@ source("BuildNew.R")
     Alresz$OBJ_FELS <- "BETM"
     Minoszt <- SelectedObjects
     Minoszt$OBJ_FELS <- "BF01"
-    Minoszt$FELIRAT <- "Sz5"
+    Minoszt$FELIRAT <- paste0("Sz", sample(2:6,1))
     polmult.df <- rbind(polmult.df, Alresz, Minoszt)
     ## Add CRS
     st_crs(polmult.df) <- 23700
