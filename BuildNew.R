@@ -316,7 +316,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
     for(actualPointsRowNr in 1:nrow(points)) {
         coords.matrix <- st_coordinates(points[actualPointsRowNr,])[, c("X","Y")]
         for(actualpoints in 1:nrow(coords.matrix)) {
-            currfidother <- currfid + sample(1:5, 1)
+            currfidother <- currfidother + sample(1:5, 1)
             actualpoint <- coords.matrix[actualpoints,]
             pointNode <- newXMLNode("RESZLETPONTOK", parent=metadataNode, namespace = "eing")
             addAttributes(pointNode, "gml:id" = paste0("fid-", currfidother))
