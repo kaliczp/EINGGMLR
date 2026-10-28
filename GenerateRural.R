@@ -4,6 +4,7 @@ students <- read.table("export.csv", sep = ";", head = TRUE)
 
 studentnr <- 1
 
+onlyone <- TRUE # No neighbours
 megoszt <- TRUE # Double size parcel
 MeasureLine <- FALSE
 source("Common.R")
@@ -17,6 +18,7 @@ source("BuildNew.R")
     p1 <- rbind(c(0,0), c(parcelwidth,0),
                 c(parcelwidth,parcellength), c(0,parcellength), c(0,0))
     pol1 <- st_polygon(list(p1))
+  if(!onlyone) {
     if(megoszt) {
         pol2 <- pol1 + c(parcelwidth, 0,
                          2 * parcelwidth, 0,
@@ -36,12 +38,19 @@ source("BuildNew.R")
                       pol3 +
                   c(0,0,round(rnorm(1,sd = 0.1),2),0,round(rnorm(1, sd = 0.1),2),0,0,0,0,0))
     polmult.df <- st_sf(data.frame(Selected = c(F,T,F), geom=polmult))
+  } else { # !OnlyOne else
+        polmult <- st_sfc(pol1)
+        polmult.df <- st_sf(data.frame(Selected = TRUE, geom=polmult))
+  } # !OnlyOne end
     ## Parcel ID
     hrsz <- sample(60:580,1)
+  if(!onlyone) {
     hrsz[2:3] <- hrsz[1] + 1:2
     if(megoszt)
         hrsz[1] <- paste0(hrsz[1], "/2")
+  } # OnlyOne end
     polmult.df[, "HRSZ"] <- hrsz
+  if(!onlyone) {
     ## Street gen
     streetcoords <- st_coordinates(polmult)
     streetcoords <- unique(streetcoords[streetcoords[,"Y"] < 1,c("X", "Y")])
@@ -83,14 +92,20 @@ source("BuildNew.R")
     if(MeasureLine) {
         st_cast(polmult.df, "MULTIPOINT")
     }
+  } else { # !OnlyOne else
+        polmult.df <- cbind(polmult.df, OBJ_FELS = "BD02")
+        polmult.df$FELIRAT <- NA
+  } # !OnlyOne end
     polmult.df$geometry<-polmult.df$geometry*rot(studpos * pi/40) + c(864000, 100000)
 ### Text rotation angle
     szovegszog <- studpos*180/40 - 90
     szovegszog <- ifelse(szovegszog < 0, szovegszog + 360, szovegszog)
     polmult.df <- cbind(polmult.df, IRANY = szovegszog)
+  if(!onlyone) {
     streetangle <- szovegszog + 90
     streetangle <- ifelse(streetangle > 360, streetangle - 360, streetangle)
     polmult.df[kozterLine, "IRANY"] <- streetangle
+  } # !OnlyOne end
 ## Get rotated, shifted coordinates
     SelectedObjects <- polmult.df[polmult.df$Selected,]
     point.coords.eov <- round(st_coordinates(SelectedObjects)[, c("X","Y")], 2)
