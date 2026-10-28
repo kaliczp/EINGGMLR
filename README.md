@@ -1,6 +1,6 @@
 # xmllint
 Check:
-`xmllint --noout --schema VTM_2_8_xsd_kieg/EING_GML_szabvany_leiras_2_8.xsd  EINGGMLR/Telkek/KaliczPéter.gml`
+`xmllint --noout --schema VTM_2_8_xsd_kieg/EING_GML_szabvany_leiras_2_8.xsd  EINGGMLR/Telkek/KaliczPéter.gml; echo $?`
 
 `xmllint --format KaliczPéter.gml`
 
