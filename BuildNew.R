@@ -220,7 +220,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
     if(any(DATclass == "C")) {
         warning("Buildings exist!")
         buildnum <- nrow(epuletpoly)
-        buildfid <- currfid + round(abs(rnorm(buildnum))*10)
+        buildfid <- currfid + round(abs(rnorm(1))*10) + 1:buildnum
         for(actbuildingpoly in 1:buildnum) {
             ## Coordinates prepcocessing
             buildcoords.matrix <- round(st_coordinates(epuletpoly[actbuildingpoly,])[, c("X","Y")], 2)
