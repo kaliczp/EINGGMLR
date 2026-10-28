@@ -12,7 +12,7 @@
 `du`
 
 ## Get MetaDataList
-xmllint --xpath "//*[local-name()='FeatureCollection']/*[local-name()='metaDataProperty']/*[local-name()='GenericMetaData']/*[local-name()='MetaDataList']" KaliczPéter.gml 
+`xmllint --xpath "//*[local-name()='FeatureCollection']/*[local-name()='metaDataProperty']/*[local-name()='GenericMetaData']/*[local-name()='MetaDataList']" KaliczPéter.gml`
 
 
 # ogrinfo
