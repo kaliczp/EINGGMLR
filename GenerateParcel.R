@@ -103,6 +103,7 @@ polmultnostreet.df <- rbind(polmult.df, nostreetPol.df)
 strhrsz <- as.numeric(hrsz[2]) - streetLeftRight[1] - 1
 polmult.df <- rbind(polmultnostreet.df, st_sf(data.frame(Selected = F, HRSZ = strhrsz, geom = streetPol)))
 polmult.df <- cbind(polmult.df, OBJ_FELS = c(rep("BD01", nrow(polmult.df)-1), "BC01"))
+    polmult.df$FELIRAT <- ""
 ### Buildings generation
     if(building){
         ## Parcels with building
@@ -134,15 +135,19 @@ b2 <- rbind(c(buildleft, buildlow),
             c(buildleft, buildlow + buildlength),
             c(buildleft, buildlow))
 buildpol2 <- st_polygon(list(b2))
+        ## Building number for text
+        buildNumText = streetLeftRight[1] * 2 + sample(c(0, 1), 1)
 ## Put into one geometry
 builpolmult <- st_sfc(buildpol1, buildpol2)
         polmult.df <- rbind(polmult.df,
                             st_sf(data.frame(Selected = T,
                                              HRSZ=polmult.df[actualParcel,]$HRSZ,
-                                             OBJ_FELS = c("CA01", "CA06")), geometry = builpolmult),
+                                             OBJ_FELS = c("CA01", "CA06"),
+                                             FELIRAT = ""), geometry = builpolmult),
                             st_sf(data.frame(Selected = T,
                                              HRSZ=polmult.df[actualParcel,]$HRSZ,
-                                             OBJ_FELS = "TX35"), geometry = st_sfc(buildNumPoint))
+                                             OBJ_FELS = "TX35",
+                                             FELIRAT = buildNumText), geometry = st_sfc(buildNumPoint))
                             )
     } # End building
     ## Kozter name
