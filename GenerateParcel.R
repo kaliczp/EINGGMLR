@@ -139,7 +139,10 @@ builpolmult <- st_sfc(buildpol1, buildpol2)
         polmult.df <- rbind(polmult.df,
                             st_sf(data.frame(Selected = T,
                                              HRSZ=polmult.df[actualParcel,]$HRSZ,
-                                             OBJ_FELS = c("CA01", "CA06")), geometry = builpolmult)
+                                             OBJ_FELS = c("CA01", "CA06")), geometry = builpolmult),
+                            st_sf(data.frame(Selected = T,
+                                             HRSZ=polmult.df[actualParcel,]$HRSZ,
+                                             OBJ_FELS = "TX35"), geometry = st_sfc(buildNumPoint))
                             )
     } # End building
     ## Kozter name
