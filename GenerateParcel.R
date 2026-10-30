@@ -195,8 +195,8 @@ point.coords.eov <- point.coords.eov[!duplicated(point.coords.eov),]
                                         HRSZ=SelectedObjects[1,]$HRSZ,
                                         OBJ_FELS = c("AC01"),
                                         FELIRAT = "",
-                                        IRANY = 0)
-                           , geometry = st_sfc(st_multipoint(point.coords.eov))
+                                        IRANY = 0),
+                             geometry = st_sfc(st_multipoint(point.coords.eov))
                              )
     } else { # Parcel is residential
         ReszlPoints <- st_sf(data.frame(Selected = T,
