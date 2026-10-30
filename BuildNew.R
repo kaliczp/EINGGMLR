@@ -218,7 +218,6 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
     }
 ### Building
     if(any(DATclass == "C")) {
-        warning("Buildings exist!")
         buildnum <- nrow(epuletpoly)
         buildfid <- currfid + round(abs(rnorm(1))*10) + 1:buildnum
         for(actbuildingpoly in 1:buildnum) {
@@ -357,7 +356,6 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
     } # For loop actualPointsRowNr
 ### Text preocessing
     if(any(DATclass == "T")) {
-        warning("Text exist!")
         textnum <- nrow(texts)
         currfidother <- currfid + sample(100:110, 1)
         texts$FID <- currfidother + 1:textnum
