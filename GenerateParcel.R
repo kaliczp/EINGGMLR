@@ -177,9 +177,17 @@ if(onlyone) {
         polmult.df[2, "IRANY"] <- ifelse(feliratszog > 270, feliratszog - 270, feliratszog + 90)
     }
 } else {
-    streetangle <- szovegszog + 270
-    streetangle <- ifelse(streetangle > 360, streetangle - 360, streetangle)
+    if(szovegszog >= 0 & szovegszog < 270) {
+        streetangle <- szovegszog - 90
+        streetangle <- ifelse(streetangle < 0, streetangle + 360, streetangle)
+    } else {
+        streetangle <- szovegszog + 90
+        streetangle <- ifelse(streetangle > 360, streetangle - 360, streetangle)
+        ## Other texts
+        polmult.df[grep("TX", polmult.df$OBJ_FELS), "IRANY"] <- streetangle + 90
+    }
     polmult.df[kozterLine, "IRANY"] <- streetangle
+    sumstreetangle <- c(sumstreetangle, paste(szovegszog, streetangle))
 }
 ## Get rotated, shifted coordinates
     SelectedObjects <- polmult.df[polmult.df$Selected,]
