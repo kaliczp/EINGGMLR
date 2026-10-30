@@ -124,7 +124,7 @@ b1 <- rbind(c(buildleft,frontyard),
             c(buildleft, frontyard))
 buildpol1 <- st_polygon(list(b1))
         ## House number point
-        buildNumPoint <- st_point(c(buildleft + buildwidth/2, frontyard + 0.3))
+        buildNumPoint <- st_point(c(buildleft + buildwidth/2, frontyard + 2))
 ## Second building
 buildlow <- buildlength + sample(1:10,1)
 buildwidth <- 5.5 + sample(c(0, 0.5, 1), 1)
