@@ -358,17 +358,21 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
 ### Text preocessing
     if(any(DATclass == "T")) {
         warning("Text exist!")
+        textnum <- nrow(texts)
         currfidother <- currfid + sample(100:110, 1)
-        actualtext <- texts[1,]
-        textpoint <- round(st_coordinates(actualtext),2)
+        texts$FID <- currfidother + 1:textnum
+        for(acttextrow in 1:textnum) {
+            actualtext <- texts[acttextrow, ]
+            textpoint <- round(st_coordinates(actualtext),2)
         textNode <- newXMLNode("FELIRATOK", parent=metadataNode, namespace = "eing")
-        addAttributes(textNode, "gml:id" = paste0("fid-", currfidother))
+            addAttributes(textNode, "gml:id" = paste0("fid-", actualtext$FID))
         pointBounded <- newXMLNode("boundedBy", parent=textNode, namespace = "gml")
         pointEnvelope <- newXMLNode("Envelope", parent=pointBounded, namespace = "gml")
         addAttributes(pointEnvelope, srsDimension = 2, srsName = srsName)
         addChildren(pointEnvelope, newXMLNode("lowerCorner", paste(textpoint, collapse = " "), namespace = "gml"))
         addChildren(pointEnvelope, newXMLNode("upperCorner", paste(textpoint, collapse = " "), namespace = "gml"))
-        addChildren(textNode, newXMLNode("GEOBJ_ID", currfidother, namespace = "eing"))
+            addChildren(textNode,
+                        newXMLNode("GEOBJ_ID", actualtext$FID, namespace = "eing"))
         addChildren(textNode, newXMLNode("OBJ_FELS", actualtext$OBJ_FELS, namespace = "eing"))
         addChildren(textNode, newXMLNode("RETEG_ID", 2, namespace = "eing"))
         addChildren(textNode, newXMLNode("RETEG_NEV", "Feliratok" , namespace = "eing"))
@@ -390,8 +394,11 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
         pointGeometry <- newXMLNode("geometry", parent=textNode, namespace = "eing")
         pointPoint <- newXMLNode("Point", parent=pointGeometry, namespace = "gml")
         addAttributes(pointPoint, srsDimension = 2, srsName = srsName)
-        addChildren(pointPoint, newXMLNode("pos", paste(textpoint, collapse = " "), namespace = "gml"))
-    }
+            addChildren(pointPoint, newXMLNode("pos",
+                                               paste(textpoint, collapse = " "),
+                                               namespace = "gml"))
+        } # end text for
+    } # End text
 ### Save gml
     if(is.null(file)) {
         saveXML(doc, encoding = "UTF-8")
