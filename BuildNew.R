@@ -386,7 +386,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
                                          namespace = "eing"))
         addChildren(textNode, newXMLNode("SZINT", 0, namespace = "eing"))
         addChildren(textNode, newXMLNode("IRANY",
-                                         st_drop_geometry(actualtext[, "IRANY", drop = TRUE]),
+                                         actualtext$IRANY,
                                          namespace = "eing"))
         addChildren(textNode, newXMLNode("FRSZ_ID", currfid, namespace = "eing"))
         pointGeometry <- newXMLNode("geometry", parent=textNode, namespace = "eing")
