@@ -6,7 +6,7 @@ building <- FALSE
 megoszt <- FALSE # Double size parcel
 onlyone <- TRUE # No neighbours
 MeasureLine <- FALSE
-BuildingInstIndicator <- FALSE
+BuildingInstallation <- FALSE
 source("Common.R")
 source("BuildNew.R")
 
@@ -228,12 +228,13 @@ polmult.df <- rbind(polmult.df, ReszlPoints)
 st_crs(polmult.df) <- 23700
 aktfilename <- paste0("Telkek/",gsub(" ", "", students[studentnr,]))
 ### Building installation
-if(BuildingInstIndicator) {
-    instBuildingIndex <- polmult.df$OBJ_FELS == "CA06" & polmult.df$Selected
-    instBuilding <- polmult.df[instBuildingIndex, ]
-    polmult.df <- polmult.df[!instBuildingIndex, ]
-    st_write(instBuilding, paste0(aktfilename, ".shp"))
-}
+    if(BuildingInstallation) {
+        instBuildingIndex <- polmult.df$OBJ_FELS == "CA06" & polmult.df$Selected
+        instBuilding <- polmult.df[instBuildingIndex, ]
+        polmult.df <- polmult.df[!instBuildingIndex, ]
+        st_write(instBuilding, paste0(aktfilename, ".shp"))
+        polmult.df <- polmult.df[!polmult.df$OBJ_FELS == "CA06", ]
+    }
 ### Export gml
 BuildNew(polmult.df, file = paste0(aktfilename, ".gml"))
 }
