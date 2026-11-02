@@ -187,7 +187,6 @@ if(onlyone) {
         polmult.df[grep("TX", polmult.df$OBJ_FELS), "IRANY"] <- streetangle + 90
     }
     polmult.df[kozterLine, "IRANY"] <- streetangle
-    sumstreetangle <- c(sumstreetangle, paste(szovegszog, streetangle))
 }
 ## Get rotated, shifted coordinates
     SelectedObjects <- polmult.df[polmult.df$Selected,]
