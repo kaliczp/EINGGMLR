@@ -234,6 +234,7 @@ aktfilename <- paste0("Telkek/",gsub(" ", "", students[studentnr,]))
         polmult.df <- polmult.df[!instBuildingIndex, ]
         st_write(instBuilding, paste0(aktfilename, ".shp"))
         polmult.df <- polmult.df[!polmult.df$OBJ_FELS == "CA06", ]
+        ## Remove reszletponits of additional building or not?
     }
 ### Export gml
 BuildNew(polmult.df, file = paste0(aktfilename, ".gml"))
