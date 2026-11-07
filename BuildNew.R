@@ -81,6 +81,10 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
     for(actualParcelPoly in orderedParcelPoly) {
         ## Coordinates prepcocessing
         coords.matrix <- round(st_coordinates(ParcelPoly[actualParcelPoly,])[, c("X","Y")], 2)
+        ## Revers order compared OGC/GML CCW
+        if(st_is_valid(ParcelPoly[actualParcelPoly,]) {
+            coords.matrix <- coords.matrix[length(coords.matrix):1,]
+        }
         coords <- as.numeric(t(coords.matrix))
         ## Remove duplicated points
         coords.matrix <- coords.matrix[!duplicated(coords.matrix),]
