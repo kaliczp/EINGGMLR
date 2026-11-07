@@ -342,7 +342,11 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
                 if(PointDATcode == "AC02" & actualpoints < 3) {
                     PointNumCode <- 4295
                 } else {
+                    if(PointDATcode == "AC03") {
+                        PointNumCode <- 4395
+                    } else {
                     PointNumCode <- 4236
+                    }
                 }
             }
             addChildren(pointNode, newXMLNode("PONTKOD", PointNumCode, namespace = "eing"))
