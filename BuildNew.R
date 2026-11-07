@@ -267,7 +267,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
             addChildren(parcelNode, newXMLNode("FEKVES", Fekves, namespace = "eing")) # Belter
             buildhrsz <- st_drop_geometry(epuletpoly[actbuildingpoly, "HRSZ", drop = TRUE])
             addChildren(parcelNode, newXMLNode("HRSZ", buildhrsz, namespace = "eing"))
-            addChildren(parcelNode, newXMLNode("FELIRAT", paste(actbuildingpoly,"ép."),
+            addChildren(parcelNode, newXMLNode("FELIRAT", paste0(actbuildingpoly,".ép"),
                                                namespace = "eing"))
             addChildren(parcelNode, newXMLNode("SZINT", 0, namespace = "eing"))
             ## Text angle
