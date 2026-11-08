@@ -130,7 +130,11 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
         ## Text angle
         textangle <- as.character(ParcelPoly[actualParcelPoly,"IRANY", drop = TRUE])
         addChildren(parcelNode, newXMLNode("IRANY", textangle, namespace = "eing"))
-        addChildren(parcelNode, newXMLNode("MUVEL_AG", 4557, namespace = "eing")) # Kivett
+        if(Fekves[1] == 3720) { # In case of rural
+            addChildren(parcelNode, newXMLNode("MUVEL_AG", namespace = "eing")) # Info in TERMF
+        } else { # In case of residential
+            addChildren(parcelNode, newXMLNode("MUVEL_AG", 4557, namespace = "eing")) # Kivett
+        }
         addChildren(parcelNode, newXMLNode("JOGI_TERULET", adminareagen, namespace = "eing"))
         parcelGeometry <- newXMLNode("geometry", parent=parcelNode, namespace = "eing")
         parcelPolygon <- newXMLNode("Polygon", parent=parcelGeometry, namespace = "gml")
