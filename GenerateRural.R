@@ -9,6 +9,17 @@ megoszt <- TRUE # Double size parcel
 MeasureLine <- FALSE
 source("Common.R")
 source("BuildNew.R")
+muvelag <- c("Sz", # Szántó
+             "R", # Rét
+             "L", # Legelő
+             "Gy", # Gyümölcsös
+             "Sző", # Szőlő
+             "K", # Kert
+             "N", # Nádas
+             "Ft", #Fásított terület
+             "E", # Erdő
+             "Ht" # Halastó
+             )
 
 {
     studpos <- studentnr + 10
@@ -133,7 +144,12 @@ source("BuildNew.R")
     Alresz$OBJ_FELS <- "BETM"
     Minoszt <- SelectedObjects
     Minoszt$OBJ_FELS <- "BF01"
-    Minoszt$FELIRAT <- paste("Sz", sample(2:6,1))
+    if(onlyone) {
+        aktmuvel <- sample(muvelag, 1)
+    } else {
+        aktmuvel <- sample(muvelag[1:3], 1)
+    }
+    Minoszt$FELIRAT <- paste(aktmuvel, sample(2:6,1))
     polmult.df <- rbind(polmult.df, Alresz, Minoszt)
     ## Add CRS
     st_crs(polmult.df) <- 23700

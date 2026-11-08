@@ -210,14 +210,37 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
         addChildren(parcelNode, newXMLNode("FEKVES", Fekves, namespace = "eing"))
         parcelhrsz <- st_drop_geometry(QualityClassPoly[QualityClassPoly, "HRSZ", drop = TRUE])
         addChildren(parcelNode, newXMLNode("HRSZ", parcelhrsz, namespace = "eing"))
+        ## MUVEL_AG and FELIRAT PROCESSING
+        ## Lookup table
+        MuvagLookup <- data.frame(
+            charcode = c("Sz", "R", "L", "Gy", "Sző", "K", "N", "Ft", "E", "Ht", "mk"),
+            numcode = c(
+                4561, #	Szántó
+                4560, #	Rét
+                4558, #	Legelő
+                4554, #	Gyümölcsös
+                4562, #	Szőlő
+                4556, #	Kert
+                4559, #	Nádas
+                4553, #	Fásított terület
+                4552, #	Erdő
+                4555, #	Halastó
+                4557 #	Kivett
+            )
+        )
+        ## Select code
+        # Search with match()
         QualText <- st_drop_geometry(QualityClassPoly[QualityClassPoly, "FELIRAT", drop = TRUE])
-        QualClassNr <- as.numeric(substring(QualText, nchar(QualText)))
+        muvagChar <- unlist(strsplit(QualText, split = " "))
+        muvagIndex <- match(muvagChar[1], MuvagLookup$charcode)
+        kodID <- MuvagLookup[muvagIndex, "numcode"]
+        QualClassNr <- as.numeric(muvagChar[2])
         addChildren(parcelNode, newXMLNode("FELIRAT", QualText, namespace = "eing"))
         addChildren(parcelNode, newXMLNode("SZINT", 0, namespace = "eing"))
         ## Text angle
         textangle <- as.character(ParcelPoly[actualParcelPoly,"IRANY", drop = TRUE])
         addChildren(parcelNode, newXMLNode("IRANY", textangle, namespace = "eing"))
-        addChildren(parcelNode, newXMLNode("MUVEL_AG", 4561, namespace = "eing")) # Nem ism
+        addChildren(parcelNode, newXMLNode("MUVEL_AG", kodID, namespace = "eing")) # Nem ism
         addChildren(parcelNode, newXMLNode("JOGI_TERULET", adminareagen, namespace = "eing"))
         addChildren(parcelNode, newXMLNode("MIN_OSZT", 1000001500 + QualClassNr, namespace = "eing")) # Nem ism
         addChildren(parcelNode, newXMLNode("ALR_ID", alrID[1], namespace = "eing")) # Nem ism
