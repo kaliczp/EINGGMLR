@@ -144,7 +144,6 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
         addAttributes(parcelRing, srsDimension = 2)
         addChildren(parcelRing, newXMLNode("posList", paste(coords, collapse = " "), namespace = "gml"))
         foldrID <- allfid[actualParcelPoly] # Collect all actual parcelID
-    } # for foldr
 ### Create alrészlet in the case of rural parcels.
     if(Fekves[1] == 3720) {
         ### Alreszl
@@ -253,6 +252,8 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
         addAttributes(parcelRing, srsDimension = 2)
         addChildren(parcelRing, newXMLNode("posList", paste(coords, collapse = " "), namespace = "gml"))
     } # End of rural ALR, MIN
+    } # for foldr
+
 ### Building
     if(any(DATclass == "C")) {
         buildnum <- nrow(epuletpoly)
