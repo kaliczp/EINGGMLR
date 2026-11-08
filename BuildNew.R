@@ -233,6 +233,10 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
         for(actbuildingpoly in 1:buildnum) {
             ## Coordinates prepcocessing
             buildcoords.matrix <- round(st_coordinates(epuletpoly[actbuildingpoly,])[, c("X","Y")], 2)
+            ## Revers order compared OGC/GML CCW
+            if(st_is_valid(epuletpoly[actbuildingpoly,])) {
+                buildcoords.matrix <- buildcoords.matrix[nrow(buildcoords.matrix):1,]
+            }
             buildcoords <- as.numeric(t(buildcoords.matrix))
             ## Remove duplicated points
             buildcoords.matrix <- buildcoords.matrix[!duplicated(buildcoords.matrix),]
