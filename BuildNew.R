@@ -225,7 +225,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
         parcelRing <- newXMLNode("LinearRing", parent=parcelExterior, namespace = "gml")
         addAttributes(parcelRing, srsDimension = 2)
         addChildren(parcelRing, newXMLNode("posList", paste(coords, collapse = " "), namespace = "gml"))
-    }
+    } # End of rural ALR, MIN
 ### Building
     if(any(DATclass == "C")) {
         buildnum <- nrow(epuletpoly)
