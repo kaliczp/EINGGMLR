@@ -42,7 +42,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
     ## Selected poly
     currParcelPoly <- which(ParcelPoly$Selected)
     ## Külterület, belterület?
-    ParcelDATClass <- ParcelPoly[currParcelPoly, "OBJ_FELS", drop = TRUE]
+    ParcelDATClass <- ParcelPoly[currParcelPoly, "OBJ_FELS", drop = TRUE][1]
     Fekves <- ifelse(ParcelDATClass == "BD01" | ParcelDATClass == "BC01", 3719, 3720) # Bel, kul
     ## CRS
     srsName <- paste0("urn:x-ogc:def:crs:",st_crs(ParcelPoly)$input)
@@ -68,7 +68,13 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
     EndOfgmlID <- paste0(sample(c(1:10, "a", "b", "c", "d", "e", "f"),12), collapse = "")
     newXMLNode("gmlID", paste0("691da01c-7911-45a7-b831-", EndOfgmlID), parent = metalist)
     newXMLNode("gmlExportDate", round(as.numeric(Sys.time())), parent = metalist)
-    newXMLNode("gmlGeobjIds", currfid, parent = metalist)
+    ## Test more selected
+    if(length(currfid) > 1) {
+        currfidtext <- paste(currfid, collapse = ",")
+    } else {
+        currfidtext <- currfid
+    }
+    newXMLNode("gmlGeobjIds", currfidtext, parent = metalist)
     newXMLNode("xsdVersion", "2.8", parent = metalist)
 ### Data processing
     ## First create featrue Members node
@@ -76,7 +82,14 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
     ## Only two cases OK; 1 or more than 3
     if(nrpoly > 2) {
         ## Selected poly last in the order because point generation
+        if(length(currParcelPoly > 1)) { # Ordering parcels
+            ## Maybe better order it with the current indicator. It works with TRUE, FALSE.
+            orderedParcelPoly <- c(1:(currParcelPoly[1]-1),
+            (currParcelPoly[length(currParcelPoly)]+1):nrpoly,
+            currParcelPoly)
+        } else {
         orderedParcelPoly <- c(1:(currParcelPoly-1), (currParcelPoly+1):nrpoly, currParcelPoly)
+        }
     } else {
         orderedParcelPoly <- currParcelPoly
     }
@@ -259,7 +272,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
 ### Building
     if(any(DATclass == "C")) {
         buildnum <- nrow(epuletpoly)
-        buildfid <- currfid + round(abs(rnorm(1))*10) + 1:buildnum
+        buildfid <- currfid[1] + round(abs(rnorm(1))*10) + 1:buildnum
         for(actbuildingpoly in 1:buildnum) {
             ## Coordinates prepcocessing
             buildcoords.matrix <- round(st_coordinates(epuletpoly[actbuildingpoly,])[, c("X","Y")], 2)
@@ -323,11 +336,11 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
     }
 ### Points
     ## Random point geneeration related to original
-    currfidother <- currfid + round(abs(rnorm(1))*10^4)
+    currfidother <- currfid[1] + round(abs(rnorm(1))*10^4)
     ## Address coordinate if residential area non-public
-    if(DATcode[currParcelPoly] == "BD01") {
+    if(DATcode[currParcelPoly[1]] == "BD01") { # Work with more address cordinates!
         suppressWarnings( # Prevent known warning about attributes
-            currcentroid <- st_centroid(ParcelPoly[currParcelPoly,])
+            currcentroid <- st_centroid(ParcelPoly[currParcelPoly[1],])
         )
         addresscoordpoint <- round(st_coordinates(currcentroid))
         pointNode <- newXMLNode("CIMKOORDINATA", parent=metadataNode, namespace = "eing")
@@ -351,7 +364,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
         addChildren(pointNode, newXMLNode("IRANY", textangle, namespace = "eing"))
         addChildren(pointNode, newXMLNode("PONTSZAM", 1, namespace = "eing"))
         addChildren(pointNode, newXMLNode("PONTKOD", 5411, namespace = "eing"))
-        addChildren(pointNode, newXMLNode("FRSZ_ID", currfid, namespace = "eing"))
+        addChildren(pointNode, newXMLNode("FRSZ_ID", currfid[1], namespace = "eing"))
         addChildren(pointNode, newXMLNode("JELKULCS", 195, namespace = "eing"))
         addChildren(pointNode, newXMLNode("KCR_ID", 16554, namespace = "eing"))
         pointGeometry <- newXMLNode("geometry", parent=pointNode, namespace = "eing")
@@ -411,7 +424,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
 ### Text preocessing
     if(any(DATclass == "T")) {
         textnum <- nrow(texts)
-        currfidother <- currfid + sample(100:110, 1)
+        currfidother <- currfid[1] + sample(100:110, 1)
         texts$FID <- currfidother + 1:textnum
         for(acttextrow in 1:textnum) {
             actualtext <- texts[acttextrow, ]
@@ -444,7 +457,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
         addChildren(textNode, newXMLNode("IRANY",
                                          actualtext$IRANY,
                                          namespace = "eing"))
-        addChildren(textNode, newXMLNode("FRSZ_ID", currfid, namespace = "eing"))
+        addChildren(textNode, newXMLNode("FRSZ_ID", currfid[1], namespace = "eing"))
         pointGeometry <- newXMLNode("geometry", parent=textNode, namespace = "eing")
         pointPoint <- newXMLNode("Point", parent=pointGeometry, namespace = "gml")
         addAttributes(pointPoint, srsDimension = 2, srsName = srsName)
