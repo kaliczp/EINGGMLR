@@ -11,7 +11,9 @@ BuildingInstallation <- FALSE
 source("Common.R")
 source("BuildNew.R")
 
+seedvalue <- 1
 for(studentnr in 1:nrow(students)){
+    set.seed(seedvalue + studentnr)
 studpos <- studentnr + 10
 parcelwidth <- sample(seq(14,20,by=0.1),1)
 parcellength <- sample(seq(75,90,by=0.1),1)
@@ -250,5 +252,6 @@ aktfilename <- paste0("Telkek/",gsub(" ", "", students[studentnr,]))
         ## Remove reszletponits of additional building or not?
     }
 ### Export gml
+    set.seed(seedvalue + studentnr)
 BuildNew(polmult.df, file = paste0(aktfilename, ".gml"))
 }
