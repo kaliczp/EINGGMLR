@@ -221,12 +221,17 @@ point.coords.eov <- point.coords.eov[!duplicated(point.coords.eov),]
                              geometry = st_sfc(st_multipoint(point.coords.eov))
                              )
     } else { # Parcel is residential
+        if(egyesit) {
+            AtPublicBorderPoints <- c(1:2, 5)
+        } else {
+            AtPublicBorderPoints <- 1:2
+        }
         ReszlPoints <- st_sf(data.frame(Selected = T,
                                         HRSZ=SelectedObjects[1,]$HRSZ,
                                         OBJ_FELS = c("AC01"),
                                         FELIRAT = "",
                                         IRANY = 0),
-                             geometry = st_sfc(st_multipoint(point.coords.eov[1:2,]))
+                             geometry = st_sfc(st_multipoint(point.coords.eov[AtPublicBorderPoints,]))
                              )
         ReszlPoints <- rbind(ReszlPoints,
                              st_sf(data.frame(Selected = T,
@@ -234,7 +239,7 @@ point.coords.eov <- point.coords.eov[!duplicated(point.coords.eov),]
                                               OBJ_FELS = c("AC02"),
                                               FELIRAT = "",
                                               IRANY = 0),
-                                   geometry = st_sfc(st_multipoint(point.coords.eov[3:nrow(point.coords.eov),]))
+                                   geometry = st_sfc(st_multipoint(point.coords.eov[-AtPublicBorderPoints,]))
                                    )
                              )
     } # Parcel is public or residential?

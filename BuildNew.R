@@ -402,7 +402,8 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
             if(PointDATcode == "AC01") {
                 PointNumCode <- 4195
             } else {
-                if(PointDATcode == "AC02" & actualpoints < 3) {
+                UntilBuilding <- 1 + length(currfid) # Parcel corner at left and rigt in every new
+                if(PointDATcode == "AC02" & actualpoints <= UntilBuilding) {
                     PointNumCode <- 4295
                 } else {
                     if(PointDATcode == "AC03") {
