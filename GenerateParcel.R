@@ -4,6 +4,7 @@ students <- read.table("export.csv", sep = ";", head = TRUE)
 
 building <- FALSE
 megoszt <- FALSE # Double size parcel
+egyesit <- FALSE
 onlyone <- TRUE # No neighbours
 MeasureLine <- FALSE
 BuildingInstallation <- FALSE
@@ -59,14 +60,26 @@ if(onlyone) {
     } else {
         pol3 <- pol2 +  rep(c(parcelwidth, 0), 5)
     }
+    if(egyesit) {
+        pol4 <- pol3 + rep(c(parcelwidth, 0), 5)
+        increase.width <- round(abs(rnorm(1)),2)
+        polmult <- st_sfc(pol1,
+                      pol2,
+                      pol3,
+                      pol4+
+                      c(0,0,increase.width,0,increase.width + round(rnorm(1, sd = 0.1),2),0,0,0,0,0))
+        PolySelect <- c(FALSE, TRUE, TRUE, FALSE)
+    } else {
     polmult <- st_sfc(pol1,
                       pol2,
                       pol3 +
                   c(0,0,round(rnorm(1,sd = 0.1),2),0,round(rnorm(1, sd = 0.1),2),0,0,0,0,0))
-    polmult.df <- st_sf(data.frame(Selected = c(F,T,F), geom=polmult))
+        PolySelect <- c(FALSE, TRUE, FALSE)
+    }
+    polmult.df <- st_sf(data.frame(Selected = PolySelect, geom=polmult))
     ## Parcel ID
     hrsz <- sample(60:580,1)
-    hrsz[2:3] <- hrsz[1] + 1:2
+    hrsz[2:length(PolySelect)] <- hrsz[1] + 1:(length(PolySelect)-1)
     if(megoszt)
         hrsz[1] <- paste0(hrsz[1], "/2")
     polmult.df[, "HRSZ"] <- hrsz
@@ -94,7 +107,7 @@ streetcoordsOK <- rbind(streetcoords, streetcoordsOtherSide, streetcoords[1,])
 streetPol <- st_sfc(st_polygon(list(streetcoordsOK)))
 ## Neighboring parcels second row
 neighhrsz <- as.numeric(hrsz[2]) + sample(streetLeftRight[2]:(streetLeftRight[2]+100),1)
-neighhrsz[2:3] <- neighhrsz[1] + 1:2
+neighhrsz[2:length(PolySelect)] <- neighhrsz[1] + 1:(length(PolySelect)-1)
 if(megoszt)
     neighhrsz[1] <- paste0(neighhrsz[1], "/2")
 nostreetPol.df <- st_sf(data.frame(Selected = F, HRSZ = neighhrsz, geom = polmult + c(0, parcellength)))
