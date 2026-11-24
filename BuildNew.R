@@ -70,7 +70,7 @@ BuildNew <- function(fulldf, file = NULL, adminarea = NULL, TelepulesId = 3400) 
     newXMLNode("gmlExportDate", round(as.numeric(Sys.time())), parent = metalist)
     ## Test more selected
     if(length(currfid) > 1) {
-        currfidtext <- paste(currfid, collapse = ",")
+        currfidtext <- paste(currfid, collapse = " ")
     } else {
         currfidtext <- currfid
     }
