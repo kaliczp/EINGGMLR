@@ -31,7 +31,7 @@ if(megoszt) {
 } else {
     pol2 <- pol1 + rep(c(parcelwidth, 0), 5)
 }
-kozterName <- strsplit(students[studentnr,], split = " ")[[1]][2]
+kozterName <- strsplit(students[studentnr, "Név"], split = " ")[[1]][2]
 if(onlyone) {
     polmult <- st_sfc(pol1)
     polmult.df <- st_sf(data.frame(Selected = T, geom=polmult))
@@ -247,7 +247,7 @@ point.coords.eov <- point.coords.eov[!duplicated(point.coords.eov),]
 polmult.df <- rbind(polmult.df, ReszlPoints)
 ## Add CRS
 st_crs(polmult.df) <- 23700
-aktfilename <- paste0("Telkek/",gsub(" ", "", students[studentnr,]))
+aktfilename <- paste0("Telkek/",gsub(" ", "", students[studentnr, "Név"]))
 ### Building installation
     if(BuildingInstallation) {
         instBuildingIndex <- polmult.df$OBJ_FELS == "CA06" & polmult.df$Selected
