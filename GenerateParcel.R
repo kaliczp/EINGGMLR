@@ -1,6 +1,7 @@
 library(sf)
 
 students <- read.table("export.csv", sep = ";", head = TRUE)
+students$Telep <- 1100
 
 building <- FALSE
 megoszt <- FALSE # Double size parcel
@@ -258,5 +259,5 @@ aktfilename <- paste0("Telkek/",gsub(" ", "", students[studentnr,]))
     }
 ### Export gml
     set.seed(seedvalue + studentnr)
-BuildNew(polmult.df, file = paste0(aktfilename, ".gml"))
+BuildNew(polmult.df, file = paste0(aktfilename, ".gml"), TelepulesId = students[studentnr, "Telep"])
 }
